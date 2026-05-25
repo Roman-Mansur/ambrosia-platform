@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pipeline Ambrosia ù Rec Eval Platform</title>
+<title>Pipeline Ambrosia ¬ù Rec Eval Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root,[data-theme="light"],html[data-theme="light"]{
@@ -246,7 +246,7 @@ body[data-theme="dark"]{color-scheme:dark;}
 </aside>
 <main class="main">
 <div class="topbar">
-  <div><div class="topbar-title" id="topbar-title">Calibration Task</div><div class="topbar-sub" id="topbar-sub">Pipeline Ambrosia ù recommendation eval platform</div></div>
+  <div><div class="topbar-title" id="topbar-title">Calibration Task</div><div class="topbar-sub" id="topbar-sub">Pipeline Ambrosia ¬ù recommendation eval platform</div></div>
   <div id="topbar-actions">
     <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
       <svg id="theme-icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.5a6.5 6.5 0 107.5 7.5A5.5 5.5 0 118 1.5z"/></svg>
@@ -319,7 +319,7 @@ body[data-theme="dark"]{color-scheme:dark;}
 <div class="page" id="page-expert-create">
   <div class="card card-pad" style="max-width:640px">
     <div class="card-header">Create Eval Task</div>
-    <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:16px">Experts generate queries within assigned categories. After creating a task, search the <strong>live DoorDash app</strong> as an end user, then <strong>manually capture</strong> the top 5 results shown and evaluate them. No API access ù the platform does not pull results automatically.</p>
+    <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:16px">Experts generate queries within assigned categories. After creating a task, search the <strong>live DoorDash app</strong> as an end user, then <strong>manually capture</strong> the top 5 results shown and evaluate them. No API access ¬ù the platform does not pull results automatically.</p>
     <div style="display:flex;flex-direction:column;gap:14px">
       <div class="eval-field"><label>Query Text</label><input class="input" id="create-query-text" placeholder='e.g. "cheap healthy thai near downtown"'></div>
       <div class="eval-field"><label>Generation Category</label><select class="select" id="create-category"></select></div>
@@ -375,7 +375,7 @@ body[data-theme="dark"]{color-scheme:dark;}
     <div class="card-header">Expert Onboarding</div>
     <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Required before calibration. Market assignment, eval experience, and availability.</p>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <select class="select"><option>Market: US ù San Francisco</option><option>US ù NYC</option><option>US ù LA</option></select>
+      <select class="select"><option>Market: US ¬ù San Francisco</option><option>US ¬ù NYC</option><option>US ¬ù LA</option></select>
       <select class="select"><option>Eval experience: Search / rec systems</option><option>Food delivery apps</option><option>General relevance eval</option></select>
       <select class="select"><option>Availability: 10+ hrs/week</option><option>5-10 hrs/week</option></select>
       <button class="btn btn-primary btn-sm" style="width:fit-content">Save Profile</button>
@@ -433,12 +433,12 @@ body[data-theme="dark"]{color-scheme:dark;}
 
 
 <div class="page" id="page-admin-tasks">
-  <div class="callout"><strong>All tasks</strong> ù admin view of every expert-generated eval task across the pipeline.</div>
+  <div class="callout"><strong>All tasks</strong> ¬ù admin view of every expert-generated eval task across the pipeline.</div>
   <div class="table-wrap"><table class="task-table"><thead><tr><th>Task ID</th><th>Expert</th><th>Query</th><th>Category</th><th>Status</th><th>Market</th></tr></thead><tbody id="admin-tasks-tbody"></tbody></table></div>
 </div>
 
 <div class="page" id="page-admin-calibration">
-  <div class="callout"><strong>Calibration feedback queue</strong> ù reviewers leave feedback on screener submissions. Approve or request rework with notes.</div>
+  <div class="callout"><strong>Calibration feedback queue</strong> ¬ù reviewers leave feedback on screener submissions. Approve or request rework with notes.</div>
   <div class="table-wrap"><table class="data-table"><thead><tr>
     <th>Expert</th><th>Email</th><th>Market</th><th>Attempt</th><th>Submitted</th><th>Status</th><th>Feedback</th><th>Actions</th>
   </tr></thead><tbody id="admin-cal-tbody"></tbody></table></div>
@@ -468,25 +468,25 @@ body[data-theme="dark"]{color-scheme:dark;}
 
 <div class="page" id="page-spec-overview">
   <div class="overview-section"><h3>Platform Overview</h3><p>Human evaluation with no DoorDash API dependency. Experts generate queries, search the live app as end users, manually capture top-5 results, and submit structured assessments optimized for AHT.</p></div>
-  <div class="overview-section"><h3>Roles</h3><ul><li><strong>Expert</strong> ù create tasks, capture results from live app, evaluate, submit</li><li><strong>Reviewer</strong> ù flagged evals + review queue</li><li><strong>Admin</strong> ù all tasks, calibration feedback, delivery</li></ul></div>
+  <div class="overview-section"><h3>Roles</h3><ul><li><strong>Expert</strong> ¬ù create tasks, capture results from live app, evaluate, submit</li><li><strong>Reviewer</strong> ¬ù flagged evals + review queue</li><li><strong>Admin</strong> ¬ù all tasks, calibration feedback, delivery</li></ul></div>
   <div class="overview-section"><h3>Schema summary (AHT-optimized)</h3><ul>
-    <li><strong>Capture:</strong> top 5 results ù restaurant name, cuisine, price, rating, delivery time (manual from live app)</li>
-    <li><strong>Query-level:</strong> intent classification, complexity 1ù3, quality/diversity/ranking 1ù5, missing category flag, optional ambiguity + constraint tradeoff, optional overall feedback</li>
-    <li><strong>Result-level (all 5):</strong> relevance 1ù5, placement (Should appear / Maybe / Should not appear)</li>
+    <li><strong>Capture:</strong> top 5 results ¬ù restaurant name, cuisine, price, rating, delivery time (manual from live app)</li>
+    <li><strong>Query-level:</strong> intent classification, complexity 1¬ù3, quality/diversity/ranking 1¬ù5, missing category flag, optional ambiguity + constraint tradeoff, optional overall feedback</li>
+    <li><strong>Result-level (all 5):</strong> relevance 1¬ù5, placement (Should appear / Maybe / Should not appear)</li>
     <li><strong>Failure-only (relevance ? 2 or Should not appear):</strong> justification, failure tags, dropped constraints</li>
   </ul></div>
   <div class="overview-section"><h3>Value beyond CTR / conversion</h3><p>Behavioral metrics show what users click and order, not <em>why</em> results fail intent. This eval surfaces insights DoorDash likely under-captures today:</p><ul>
-    <li><strong>Constraint tradeoffs</strong> ù system satisfies price but drops dietary constraint (INTENT-PARTIAL + dropped-constraint tags)</li>
-    <li><strong>Ambiguity handling</strong> ù how the system interprets vague or compound queries vs. what a user would reasonably expect</li>
-    <li><strong>Ranking failures without engagement</strong> ù buried relevant results (RANK-BURIED) that never get clicks because they're below the fold</li>
-    <li><strong>Diversity gaps</strong> ù redundant chains or missing subcategories in the result set (DIV-* tags)</li>
-    <li><strong>False positives</strong> ù results that look plausible but violate query intent; these may get occasional clicks but erode trust over time</li>
-    <li><strong>Context blindness</strong> ù ignoring time, location, or account tier signals (INTENT-IGNORE-CONTEXT)</li>
-  </ul><p style="margin-top:10px">The failure taxonomy turns these into structured, aggregatable signals ù not just anecdotal reviewer notes.</p></div>
+    <li><strong>Constraint tradeoffs</strong> ¬ù system satisfies price but drops dietary constraint (INTENT-PARTIAL + dropped-constraint tags)</li>
+    <li><strong>Ambiguity handling</strong> ¬ù how the system interprets vague or compound queries vs. what a user would reasonably expect</li>
+    <li><strong>Ranking failures without engagement</strong> ¬ù buried relevant results (RANK-BURIED) that never get clicks because they're below the fold</li>
+    <li><strong>Diversity gaps</strong> ¬ù redundant chains or missing subcategories in the result set (DIV-* tags)</li>
+    <li><strong>False positives</strong> ¬ù results that look plausible but violate query intent; these may get occasional clicks but erode trust over time</li>
+    <li><strong>Context blindness</strong> ¬ù ignoring time, location, or account tier signals (INTENT-IGNORE-CONTEXT)</li>
+  </ul><p style="margin-top:10px">The failure taxonomy turns these into structured, aggregatable signals ¬ù not just anecdotal reviewer notes.</p></div>
 </div>
 
 <div class="page" id="page-spec-pipeline">
-  <div class="overview-section"><h3>Expert workflow (no API)</h3><ol style="padding-left:18px;color:var(--text2);line-height:2"><li>Create query in platform</li><li>Open live DoorDash app (assigned market + account tier)</li><li>Run query, capture top 5 results manually</li><li>Rate relevance + placement for each</li><li>Expand failure detail only on flagged results</li><li>Submit ù auto-validation runs</li></ol></div>
+  <div class="overview-section"><h3>Expert workflow (no API)</h3><ol style="padding-left:18px;color:var(--text2);line-height:2"><li>Create query in platform</li><li>Open live DoorDash app (assigned market + account tier)</li><li>Run query, capture top 5 results manually</li><li>Rate relevance + placement for each</li><li>Expand failure detail only on flagged results</li><li>Submit ¬ù auto-validation runs</li></ol></div>
   <div class="overview-section"><h3>Validation on submit</h3><ol style="padding-left:18px;color:var(--text2);line-height:2"><li>All 5 results captured (restaurant name required)</li><li>All 5: relevance + placement filled</li><li>Failure results: justification + ?1 failure tag</li><li>Query-level scales complete</li><li>Consistency: high relevance + Should not appear, or low relevance + Should appear</li></ol></div>
 </div>
 
@@ -647,7 +647,7 @@ function createExpertTask(){if(!isCalibrationApproved()){alert('Pass calibration
 
 function getNextCalAttempt(){const subs=CALIBRATION_SUBMISSIONS.filter(s=>s.expert_email===EXPERT_PROFILE.email);return subs.length?Math.max(...subs.map(s=>s.attempt))+1:1;}
 
-function renderCalibrationPage(){const attempt=getNextCalAttempt();const st=EXPERT_PROFILE.calibrationStatus;document.getElementById('calibration-status-banner').innerHTML=st==='approved'?`<div class="lock-banner ok"><strong>Calibration complete.</strong> Task dashboard unlocked. ${calPill(st)}</div>`:st==='pending_review'?`<div class="callout callout-warn"><strong>Submitted ù awaiting reviewer feedback.</strong> ${calPill(st)}</div>`:st==='needs_rework'?`<div class="lock-banner"><strong>Reviewer left feedback.</strong> Review notes below and resubmit as v${attempt}. ${calPill(st)}</div>`:`<div class="callout"><strong>Calibration required</strong> before production tasking. ${calPill(st)}</div>`;document.getElementById('cal-id').textContent=CALIBRATION_TASK.id;document.getElementById('cal-market').textContent=CALIBRATION_TASK.market;document.getElementById('cal-query-preview').textContent=CALIBRATION_TASK.query;document.getElementById('cal-attempt-badge').textContent='next: v'+attempt;document.getElementById('cal-start-btn').style.display=(st==='not_started'||st==='needs_rework')?'inline-flex':'none';document.getElementById('cal-resubmit-btn').style.display=(st==='needs_rework'&&attempt>1)?'inline-flex':'none';const subs=CALIBRATION_SUBMISSIONS.filter(s=>s.expert_email===EXPERT_PROFILE.email);document.getElementById('cal-history-tbody').innerHTML=subs.length?subs.map(s=>{const statusPill=s.reviewStatus==='Approved'?'<span class="pill pill-green">Approved</span>':s.reviewStatus?`<span class="pill pill-red">${s.reviewStatus}</span>`:'<span class="pill pill-amber">Awaiting feedback</span>';return `<tr><td>${s.timestamp}</td><td>v${s.attempt}</td><td>${s.taskId}</td><td>${s.market}</td><td>${statusPill}</td><td style="color:var(--text3)">${s.feedback||'-'}</td></tr>`;}).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--text3)">No submissions yet</td></tr>';renderNav();renderTaskGate();}
+function renderCalibrationPage(){const attempt=getNextCalAttempt();const st=EXPERT_PROFILE.calibrationStatus;document.getElementById('calibration-status-banner').innerHTML=st==='approved'?`<div class="lock-banner ok"><strong>Calibration complete.</strong> Task dashboard unlocked. ${calPill(st)}</div>`:st==='pending_review'?`<div class="callout callout-warn"><strong>Submitted ¬ù awaiting reviewer feedback.</strong> ${calPill(st)}</div>`:st==='needs_rework'?`<div class="lock-banner"><strong>Reviewer left feedback.</strong> Review notes below and resubmit as v${attempt}. ${calPill(st)}</div>`:`<div class="callout"><strong>Calibration required</strong> before production tasking. ${calPill(st)}</div>`;document.getElementById('cal-id').textContent=CALIBRATION_TASK.id;document.getElementById('cal-market').textContent=CALIBRATION_TASK.market;document.getElementById('cal-query-preview').textContent=CALIBRATION_TASK.query;document.getElementById('cal-attempt-badge').textContent='next: v'+attempt;document.getElementById('cal-start-btn').style.display=(st==='not_started'||st==='needs_rework')?'inline-flex':'none';document.getElementById('cal-resubmit-btn').style.display=(st==='needs_rework'&&attempt>1)?'inline-flex':'none';const subs=CALIBRATION_SUBMISSIONS.filter(s=>s.expert_email===EXPERT_PROFILE.email);document.getElementById('cal-history-tbody').innerHTML=subs.length?subs.map(s=>{const statusPill=s.reviewStatus==='Approved'?'<span class="pill pill-green">Approved</span>':s.reviewStatus?`<span class="pill pill-red">${s.reviewStatus}</span>`:'<span class="pill pill-amber">Awaiting feedback</span>';return `<tr><td>${s.timestamp}</td><td>v${s.attempt}</td><td>${s.taskId}</td><td>${s.market}</td><td>${statusPill}</td><td style="color:var(--text3)">${s.feedback||'-'}</td></tr>`;}).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--text3)">No submissions yet</td></tr>';renderNav();renderTaskGate();}
 function demoCalState(state){EXPERT_PROFILE.calibrationStatus=state;renderCalibrationPage();}
 
 function myTasks(){return TASKS.filter(t=>t.expert_id===EXPERT_ID&&!t.isCalibration);}
@@ -677,14 +677,14 @@ function renderEvalInterface(task){const sub=task.submission||null;const qa=sub?
 </div>
 <div class="eval-field" id="missing-detail-wrap" style="margin-top:10px;${qa.missing_category_flag==='yes'?'':'display:none'}"><label>Missing Category Detail <span class="optional">optional</span></label><input class="input" id="qa-missing-detail" value="${(qa.missing_category_detail||'').replace(/"/g,'&quot;')}" oninput="updateEvalJson()" placeholder="What types were expected but not seen?"></div>
 <div class="query-eval-grid wide" style="margin-top:10px;grid-template-columns:1fr 1fr">
-<div class="eval-field"><label>Query Ambiguity <span class="optional">optional</span></label><select class="select" id="qa-ambiguity-flag" onchange="toggleAmbiguityDetail();updateEvalJson()"><option value="">Select...</option><option value="no"${qa.query_ambiguity_flag==='no'?' selected':''}>No ù clear intent</option><option value="yes"${qa.query_ambiguity_flag==='yes'?' selected':''}>Yes ù ambiguous</option></select></div>
-<div class="eval-field"><label>Constraint Tradeoff <span class="optional">optional</span></label><select class="select" id="qa-tradeoff-flag" onchange="toggleTradeoffDetail();updateEvalJson()"><option value="">Select...</option><option value="no"${qa.constraint_tradeoff_flag==='no'?' selected':''}>No</option><option value="yes"${qa.constraint_tradeoff_flag==='yes'?' selected':''}>Yes ù system dropped a constraint</option></select></div>
+<div class="eval-field"><label>Query Ambiguity <span class="optional">optional</span></label><select class="select" id="qa-ambiguity-flag" onchange="toggleAmbiguityDetail();updateEvalJson()"><option value="">Select...</option><option value="no"${qa.query_ambiguity_flag==='no'?' selected':''}>No ¬ù clear intent</option><option value="yes"${qa.query_ambiguity_flag==='yes'?' selected':''}>Yes ¬ù ambiguous</option></select></div>
+<div class="eval-field"><label>Constraint Tradeoff <span class="optional">optional</span></label><select class="select" id="qa-tradeoff-flag" onchange="toggleTradeoffDetail();updateEvalJson()"><option value="">Select...</option><option value="no"${qa.constraint_tradeoff_flag==='no'?' selected':''}>No</option><option value="yes"${qa.constraint_tradeoff_flag==='yes'?' selected':''}>Yes ¬ù system dropped a constraint</option></select></div>
 </div>
 <div class="eval-field" id="ambiguity-detail-wrap" style="margin-top:10px;${qa.query_ambiguity_flag==='yes'?'':'display:none'}"><label>How did the system interpret ambiguity? <span class="optional">optional</span></label><input class="input" id="qa-ambiguity-detail" value="${(qa.query_ambiguity_detail||'').replace(/"/g,'&quot;')}" oninput="updateEvalJson()" placeholder="e.g. interpreted cheap as low-rated, not low price"></div>
 <div class="eval-field" id="tradeoff-detail-wrap" style="margin-top:10px;${qa.constraint_tradeoff_flag==='yes'?'':'display:none'}"><label>Which constraints were traded off? <span class="optional">optional</span></label><input class="input" id="qa-tradeoff-detail" value="${(qa.constraint_tradeoff_detail||'').replace(/"/g,'&quot;')}" oninput="updateEvalJson()" placeholder="e.g. matched price, dropped dietary"></div>
-<div class="eval-field" style="margin-top:10px"><label>Overall Feedback <span class="optional">optional</span></label><textarea class="textarea-main" id="qa-feedback" oninput="updateEvalJson()" placeholder="Holistic notes ù only if helpful. Most signal comes from structured fields.">${qa.overall_feedback||''}</textarea></div>
+<div class="eval-field" style="margin-top:10px"><label>Overall Feedback <span class="optional">optional</span></label><textarea class="textarea-main" id="qa-feedback" oninput="updateEvalJson()" placeholder="Holistic notes ¬ù only if helpful. Most signal comes from structured fields.">${qa.overall_feedback||''}</textarea></div>
 </div>
-<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin:14px 0 10px">Top ${TOP_N} results ù capture from live app, then evaluate</div>
+<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin:14px 0 10px">Top ${TOP_N} results ¬ù capture from live app, then evaluate</div>
 <div id="results-container"></div>`;
 renderResultCards(task,sub);renderEvalSidePanel();updateEvalJson();}
 
@@ -744,7 +744,7 @@ async function runValidationPipeline(task,onComplete){qcPendingTask=task;qcPendi
 
 function closeQcModal(){document.getElementById('qc-overlay').classList.remove('open');if(currentEvalIsCalibration){showPage('expert-calibration');renderCalibrationPage();}else{showPage('expert-tasks');renderExpertTasks();}qcPendingTask=null;}
 
-function submitEval(){if(!currentEvalTask)return;if(currentEvalIsCalibration){CALIBRATION_SUBMISSIONS.push({id:CALIBRATION_SUBMISSIONS.length+1,expert_email:EXPERT_PROFILE.email,timestamp:new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}),attempt:currentEvalTask.attempt||1,taskId:'CAL-001',market:EXPERT_MARKET,reviewStatus:'',feedback:''});EXPERT_PROFILE.calibrationStatus='pending_review';showToast('Calibration submitted ù awaiting feedback');showPage('expert-calibration');renderCalibrationPage();renderAdminCalibration();return;}currentEvalTask.submission=collectEvalData();runValidationPipeline(currentEvalTask,()=>renderExpertTasks());}
+function submitEval(){if(!currentEvalTask)return;if(currentEvalIsCalibration){CALIBRATION_SUBMISSIONS.push({id:CALIBRATION_SUBMISSIONS.length+1,expert_email:EXPERT_PROFILE.email,timestamp:new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}),attempt:currentEvalTask.attempt||1,taskId:'CAL-001',market:EXPERT_MARKET,reviewStatus:'',feedback:''});EXPERT_PROFILE.calibrationStatus='pending_review';showToast('Calibration submitted ¬ù awaiting feedback');showPage('expert-calibration');renderCalibrationPage();renderAdminCalibration();return;}currentEvalTask.submission=collectEvalData();runValidationPipeline(currentEvalTask,()=>renderExpertTasks());}
 
 function renderFlagsPage(){const flagged=getFlaggedTasks();document.getElementById('flags-tbody').innerHTML=flagged.length?flagged.map(t=>`<tr onclick="openFlagDetail('${t.id}')"><td><span class="priority-dot"></span>High</td><td>${t.id}</td><td>${t.expert_id}</td><td>${t.query.slice(0,28)}...</td><td>${(t.flags||[]).map(f=>`<span class="flag-chip">${f}</span>`).join('')}</td><td>${t.submission?.results?.filter(r=>parseInt(r.relevance_1_5,10)<=2).length||0}</td><td>${t.submission?.results?.filter(r=>r.failure_tags?.some(x=>x.startsWith('RANK-'))).length||0}</td><td><button class="btn btn-primary btn-sm">Review</button></td></tr>`).join(''):'<tr><td colspan="8" style="text-align:center;color:var(--text3)">No flagged evals</td></tr>';}
 
@@ -762,7 +762,7 @@ function reviewAction(id,action){const t=TASKS.find(x=>x.id===id);if(!t)return;i
 
 function renderAdminCalibration(){document.getElementById('admin-cal-tbody').innerHTML=CALIBRATION_SUBMISSIONS.slice().reverse().map(s=>{const status=s.reviewStatus||'Awaiting feedback';const pillCls=status==='Approved'?'pill-green':status==='Needs rework'?'pill-red':'pill-amber';return `<tr><td>${s.expert_email.split('@')[0]}</td><td style="font-size:11px">${s.expert_email}</td><td>${s.market}</td><td>v${s.attempt}</td><td>${s.timestamp}</td><td><span class="pill ${pillCls}">${status}</span></td><td style="color:var(--text3)">${s.feedback||'-'}</td><td>${status!=='Approved'?`<button class="btn btn-primary btn-sm" onclick="adminCalAction(${s.id},'approve')">Approve</button> <button class="btn btn-danger btn-sm" onclick="adminCalAction(${s.id},'rework')">Leave Feedback</button>`:'-'}</td></tr>`;}).join('');}
 
-function adminCalAction(subId,action){const s=CALIBRATION_SUBMISSIONS.find(x=>x.id===subId);if(!s)return;if(action==='approve'){s.reviewStatus='Approved';s.feedback=s.feedback||'Approved ù ready for production tasking.';if(s.expert_email===EXPERT_PROFILE.email)EXPERT_PROFILE.calibrationStatus='approved';showToast('Approved ù expert unlocked');}else{const note=prompt('Reviewer feedback:','Placement inconsistent with relevance on result #2');if(note===null)return;s.reviewStatus='Needs rework';s.feedback=note;if(s.expert_email===EXPERT_PROFILE.email)EXPERT_PROFILE.calibrationStatus='needs_rework';showToast('Feedback sent');}renderAdminCalibration();renderCalibrationPage();renderNav();}
+function adminCalAction(subId,action){const s=CALIBRATION_SUBMISSIONS.find(x=>x.id===subId);if(!s)return;if(action==='approve'){s.reviewStatus='Approved';s.feedback=s.feedback||'Approved ¬ù ready for production tasking.';if(s.expert_email===EXPERT_PROFILE.email)EXPERT_PROFILE.calibrationStatus='approved';showToast('Approved ¬ù expert unlocked');}else{const note=prompt('Reviewer feedback:','Placement inconsistent with relevance on result #2');if(note===null)return;s.reviewStatus='Needs rework';s.feedback=note;if(s.expert_email===EXPERT_PROFILE.email)EXPERT_PROFILE.calibrationStatus='needs_rework';showToast('Feedback sent');}renderAdminCalibration();renderCalibrationPage();renderNav();}
 
 function initMarkets(){document.getElementById('markets-tbody').innerHTML=MARKETS.map(([id,city,tz])=>`<tr><td>${id}</td><td>${city}</td><td>${tz}</td></tr>`).join('');}
 function initStates(){document.getElementById('state-flow-display').innerHTML=STATES.map((s,i)=>`<span class="state-node">${s}</span>${i<STATES.length-1?'<span class="state-arrow">&rarr;</span>':''}`).join('');document.getElementById('state-transitions').innerHTML=TRANSITIONS.map(([f,t,b,n])=>`<tr><td>${f}</td><td>${t}</td><td>${b}</td><td style="color:var(--text3)">${n}</td></tr>`).join('');}
