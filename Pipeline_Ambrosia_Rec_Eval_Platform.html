@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline Ambrosia ù Rec Eval Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="light"],html[data-theme="light"]{
+  --bg:#f6f7fb;--bg2:#ffffff;--bg3:#f0f2f7;--surface:#f3f5fa;--surface2:#e8ebf2;
+  --border:#e2e6ef;--border2:#cdd3e0;
+  --text:#1a1d26;--text2:#5c6370;--text3:#8b929e;
+  --accent:#4169ff;--accent-dim:rgba(65,105,255,0.1);--accent-light:#3558e0;
+  --green:#16a34a;--green-dim:rgba(22,163,74,0.1);
+  --amber:#d97706;--amber-dim:rgba(217,119,6,0.1);
+  --red:#dc2626;--red-dim:rgba(220,38,38,0.1);
+  --purple:#7c3aed;--purple-dim:rgba(124,58,237,0.1);
+  --teal:#0d9488;--teal-dim:rgba(13,148,136,0.1);
+  --overlay:rgba(15,18,28,0.45);
+  --shadow:0 1px 3px rgba(15,18,28,0.06);
+  --radius:6px;--radius-lg:10px;--radius-xl:10px;
+  --font-sans:'Inter',sans-serif;--font-mono:'SF Mono','Fira Code',monospace;
+}
+[data-theme="dark"],html[data-theme="dark"]{
+  --bg:#08090e;--bg2:#0d0e16;--bg3:#111320;--surface:#151826;--surface2:#1b1f30;
+  --border:#232840;--border2:#2d3355;
+  --text:#e4e6f0;--text2:#8890b0;--text3:#4a5070;
+  --accent:#4169ff;--accent-dim:rgba(65,105,255,0.12);--accent-light:#6b8cff;
+  --green:#22c55e;--green-dim:rgba(34,197,94,0.12);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.12);
+  --red:#ef4444;--red-dim:rgba(239,68,68,0.12);
+  --purple:#8b5cf6;--purple-dim:rgba(139,92,246,0.15);
+  --teal:#14b8a6;--teal-dim:rgba(20,184,166,0.12);
+  --overlay:rgba(4,5,10,0.82);
+  --shadow:0 1px 3px rgba(0,0,0,0.2);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);min-height:100vh;font-family:var(--font-sans);font-size:13px;transition:background-color 0.2s,color 0.2s;}
+body[data-theme="light"]{color-scheme:light;}
+body[data-theme="dark"]{color-scheme:dark;}
+.sidebar{position:fixed;left:0;top:0;width:210px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;box-shadow:var(--shadow);}
+.sidebar-logo{padding:16px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);}
+.logo-text{font-size:16px;font-weight:700;letter-spacing:-0.3px;}
+.logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;box-shadow:0 0 8px var(--accent);}
+.role-switch{padding:10px 12px;border-bottom:1px solid var(--border);}
+.role-switch label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;}
+.role-select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:7px 10px;color:var(--text);font-size:12px;font-family:var(--font-sans);outline:none;cursor:pointer;}
+.sidebar-nav{padding:10px 8px;flex:1;overflow-y:auto;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius);cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;margin-bottom:2px;}
+.nav-item:hover{background:var(--surface);color:var(--text);}
+.nav-item.active{background:var(--accent-dim);color:var(--text);}
+.nav-item.locked{opacity:0.45;}
+.nav-item.locked::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--red);margin-left:auto;}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;}
+.sidebar-user{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.user-avatar{width:30px;height:30px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--accent);}
+.user-name{font-size:12px;font-weight:600;}
+.user-role{font-size:11px;color:var(--accent);}
+.main{margin-left:210px;min-height:100vh;}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-title{font-size:18px;font-weight:600;}
+.topbar-sub{font-size:12px;color:var(--text3);margin-top:2px;}
+.page{display:none;padding:24px;}
+.page.active{display:block;}
+.status-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;overflow-x:auto;}
+.status-tab{padding:10px 16px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;}
+.status-tab:hover{color:var(--text);}
+.status-tab.active{color:var(--text);border-bottom-color:var(--accent);}
+.task-table,.data-table{width:100%;border-collapse:collapse;}
+.task-table th,.data-table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;}
+.task-table td,.data-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);}
+.task-table tr:hover td,.data-table tr:hover td{background:var(--surface);cursor:pointer;}
+.table-wrap{border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:var(--bg2);box-shadow:var(--shadow);}
+.pill{display:inline-flex;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+.pill-green{background:var(--green-dim);color:var(--green);}
+.pill-blue{background:var(--accent-dim);color:var(--accent);}
+.pill-purple{background:var(--purple-dim);color:var(--purple);}
+.pill-amber{background:var(--amber-dim);color:var(--amber);}
+.pill-red{background:var(--red-dim);color:var(--red);}
+.pill-gray{background:rgba(139,145,168,0.1);color:var(--text2);}
+.pill-teal{background:var(--teal-dim);color:var(--teal);}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);}
+.card-pad{padding:18px 20px;}
+.card-header{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.btn{padding:8px 16px;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:7px;font-family:var(--font-sans);}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:#3558e0;}
+.btn-secondary{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.btn-danger{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.input,.select,.textarea-main{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:9px 13px;color:var(--text);font-size:13px;font-family:var(--font-sans);outline:none;width:100%;}
+.textarea-main{resize:vertical;line-height:1.7;color:var(--text2);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;box-shadow:var(--shadow);}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
+.stat-value{font-size:24px;font-weight:700;}
+.stat-sub{font-size:12px;color:var(--text2);margin-top:4px;}
+.info-row{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);}
+.info-key{font-size:12px;color:var(--text3);min-width:180px;font-weight:500;}
+.info-val{font-size:12px;color:var(--text2);flex:1;line-height:1.6;}
+.search-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.pager{display:flex;gap:6px;align-items:center;justify-content:space-between;margin-top:14px;}
+.pager-info{font-size:12px;color:var(--text3);}
+.task-detail{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;margin-top:16px;}
+.task-detail-header{padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.task-detail-title{font-size:15px;font-weight:600;}
+.task-detail-body{padding:20px;}
+.progress-bar-wrap{background:var(--bg3);border-radius:20px;height:8px;overflow:hidden;margin:8px 0;}
+.progress-bar-fill{height:100%;background:var(--accent);border-radius:20px;}
+.callout{background:var(--accent-dim);border:1px solid rgba(65,105,255,0.25);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:16px;font-size:12px;color:var(--text2);line-height:1.6;}
+.callout-warn{background:var(--amber-dim);border-color:rgba(245,158,11,0.25);}
+.callout-ok{background:var(--green-dim);border-color:rgba(34,197,94,0.25);}
+.callout strong{color:var(--text);}
+.lock-banner{background:var(--red-dim);border:1px solid rgba(239,68,68,0.35);border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:16px;}
+.lock-banner.ok{background:var(--green-dim);border-color:rgba(34,197,94,0.35);}
+.checklist-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.checklist-item input{margin-top:3px;accent-color:var(--accent);}
+.checklist-label{font-size:13px;color:var(--text2);line-height:1.5;}
+.flag-chip{display:inline-flex;align-items:center;gap:5px;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.3);border-radius:4px;padding:4px 10px;font-size:11px;color:var(--amber);margin:3px 3px 3px 0;}
+.priority-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:6px;box-shadow:0 0 6px var(--red);}
+.overview-section{margin-bottom:28px;}
+.overview-section h3{font-size:15px;font-weight:600;margin-bottom:10px;}
+.overview-section p,.overview-section li{font-size:13px;color:var(--text2);line-height:1.7;}
+.overview-section ul{padding-left:18px;}
+.state-flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:12px 0;}
+.state-node{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:6px 12px;font-size:11px;font-weight:600;color:var(--text2);font-family:monospace;}
+.state-arrow{color:var(--text3);font-size:12px;}
+.divider{height:1px;background:var(--border);margin:20px 0;}
+.demo-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px dashed var(--border);}
+.tbd-tag{font-size:9px;background:var(--purple-dim);color:var(--purple);padding:2px 6px;border-radius:3px;margin-left:6px;font-weight:600;}
+.qc-overlay{position:fixed;inset:0;background:var(--overlay);z-index:500;display:none;align-items:center;justify-content:center;padding:24px;}
+.qc-overlay.open{display:flex;}
+.qc-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-xl);width:min(720px,100%);max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.15);}
+.qc-modal-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.qc-modal-title{font-size:16px;font-weight:600;}
+.qc-modal-body{padding:20px 22px;}
+.qc-step{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.qc-step-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.qc-step-icon.pending{background:var(--border);color:var(--text3);}
+.qc-step-icon.running{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);}
+.qc-step-icon.pass{background:var(--green-dim);color:var(--green);}
+.qc-step-icon.flag{background:var(--amber-dim);color:var(--amber);}
+.qc-step-icon.fail{background:var(--red-dim);color:var(--red);}
+.qc-step-body{flex:1;}
+.qc-step-name{font-size:13px;font-weight:600;}
+.qc-step-detail{font-size:12px;color:var(--text3);margin-top:2px;line-height:1.5;}
+.qc-flag-item{background:var(--amber-dim);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius);padding:10px 12px;margin-bottom:8px;font-size:12px;color:var(--text2);}
+.qc-flag-item strong{color:var(--amber);display:block;margin-bottom:3px;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:white;font-size:12px;padding:8px 16px;border-radius:var(--radius);opacity:0;transition:opacity 0.2s;pointer-events:none;z-index:600;}
+.toast.show{opacity:1;}
+.query-pill{font-size:13px;font-weight:500;padding:5px 14px;border-radius:20px;background:var(--accent-dim);color:var(--accent-light);border:1px solid rgba(65,105,255,0.22);display:inline-block;}
+.theme-toggle{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font-sans);transition:background 0.15s,border-color 0.15s,color 0.15s;}
+.theme-toggle:hover{background:var(--surface);color:var(--text);border-color:var(--border);}
+.theme-toggle svg{width:16px;height:16px;flex-shrink:0;}
+.tier-badge,.intent-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid var(--border2);margin-left:6px;}
+.tier-badge{color:var(--amber);background:var(--amber-dim);}
+.intent-badge{color:var(--teal);background:var(--teal-dim);}
+.eval-workspace{display:grid;grid-template-columns:1fr 260px;gap:0;border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;background:var(--bg2);min-height:600px;}
+.eval-main{padding:20px;overflow-y:auto;max-height:calc(100vh - 180px);}
+.eval-side{border-left:1px solid var(--border);background:var(--bg2);padding:14px 12px;overflow-y:auto;}
+.query-eval{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin:14px 0;}
+.query-eval-title{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+.query-eval-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.query-eval-grid.wide{grid-template-columns:1fr 1fr;}
+.eval-field{display:flex;flex-direction:column;gap:4px;}
+.eval-field label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;}
+.eval-field select,.eval-field textarea{width:100%;font-size:12px;padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--font-sans);outline:none;}
+.eval-field textarea{resize:vertical;min-height:44px;line-height:1.5;}
+.eval-field .optional{font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3);font-size:9px;}
+.result-card{margin-bottom:10px;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:var(--bg2);box-shadow:var(--shadow);}
+.result-card.passing{border-color:rgba(22,163,74,0.45);}
+.result-card.flagged{border-color:rgba(220,38,38,0.45);}
+.result-card.partial{border-color:rgba(217,119,6,0.45);}
+[data-theme="dark"] .result-card.passing{border-color:rgba(34,197,94,0.45);}
+[data-theme="dark"] .result-card.flagged{border-color:rgba(239,68,68,0.45);}
+[data-theme="dark"] .result-card.partial{border-color:rgba(245,158,11,0.45);}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface);border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap;}
+.rank-num{font-size:11px;font-weight:700;font-family:var(--font-mono);color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:4px;}
+.rest-name{font-size:13px;font-weight:600;}
+.rest-meta{font-size:11px;color:var(--text2);}
+.card-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.action-label{font-size:11px;color:var(--text2);}
+.placement-select,.overall-select{font-size:11px;padding:4px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:var(--font-sans);outline:none;}
+.score-btns{display:flex;gap:3px;}
+.sb{font-size:11px;font-weight:600;padding:4px 10px;border:1px solid var(--border2);border-radius:var(--radius);cursor:pointer;background:transparent;color:var(--text2);font-family:var(--font-sans);}
+.sb.pass{color:var(--green);}.sb.partial{color:var(--amber);}.sb.fail{color:var(--red);}
+.sb.pass.active-score{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+.sb.partial.active-score{background:var(--amber-dim);border-color:var(--amber);color:var(--amber);}
+.sb.fail.active-score{background:var(--red-dim);border-color:var(--red);color:var(--red);}
+.card-body{padding:12px 14px;}
+.card-fields{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;}
+.field-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;}
+.field-val{font-size:12px;color:var(--text2);}
+.capture-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:14px;}
+.capture-section-title{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
+.capture-grid{display:grid;grid-template-columns:2fr 1fr 70px 70px 70px;gap:8px;}
+.capture-grid .eval-field label{font-size:9px;}
+.placement-btns{display:flex;gap:4px;flex-wrap:wrap;}
+.placement-btns .sb{font-size:10px;padding:5px 8px;}
+.placement-btns .sb.appear.active-score{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+.placement-btns .sb.maybe.active-score{background:var(--amber-dim);border-color:var(--amber);color:var(--amber);}
+.placement-btns .sb.no-appear.active-score{background:var(--red-dim);border-color:var(--red);color:var(--red);}
+.failure-panel-hint{font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.5;}
+.failure-panel{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);}
+.failure-panel.show{display:block;}
+.tax-tag{font-size:10px;padding:3px 9px;border:1px solid var(--border2);border-radius:20px;cursor:pointer;background:transparent;color:var(--text2);font-family:var(--font-sans);margin:2px;}
+.tax-tag.active-tag{background:var(--red-dim);color:var(--red);border-color:var(--red);}
+.constraint-chip{font-size:10px;padding:3px 9px;border:1px solid var(--border2);border-radius:20px;cursor:pointer;color:var(--text2);background:transparent;font-family:var(--font-sans);margin:2px;}
+.constraint-chip.active-chip{background:var(--amber-dim);color:var(--amber);border-color:var(--amber);}
+.reasoning-input,.overall-textarea{width:100%;font-size:12px;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--font-sans);resize:vertical;outline:none;line-height:1.5;}
+.reasoning-input{min-height:44px;}.overall-textarea{min-height:52px;}
+.overall-section{margin-top:16px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);}
+.overall-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:10px;}
+.overall-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.sec-title{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
+.stat-row{display:flex;justify-content:space-between;padding:6px 9px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);margin-bottom:5px;font-size:12px;}
+.stat-val.good{color:var(--green);}.stat-val.bad{color:var(--red);}.stat-val.warn{color:var(--amber);}
+.tax-ref-row{padding:6px 9px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);margin-bottom:4px;}
+.tax-ref-name{font-size:10px;font-weight:600;color:var(--red);}
+.tax-ref-desc{font-size:10px;color:var(--text3);margin-top:2px;line-height:1.4;}
+.review-readonly .result-card{pointer-events:none;opacity:0.95;}
+.review-readonly .sb,.review-readonly .tax-tag,.review-readonly .constraint-chip{cursor:default;}
+@media(max-width:1100px){.eval-workspace{grid-template-columns:1fr;}.query-eval-grid,.card-fields,.grid-4{grid-template-columns:1fr 1fr;}.sidebar{width:60px;}.sidebar-logo .logo-text,.role-switch label,.nav-item span,.sidebar-user div:last-child{display:none;}.main{margin-left:60px;}}
+</style>
+</head>
+<body data-theme="light">
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="logo-text">Ambrosia</div><div class="logo-dot"></div></div>
+  <div class="role-switch">
+    <label>View as</label>
+    <select class="role-select" id="role-select" onchange="switchRole(this.value)">
+      <option value="expert">Expert</option>
+      <option value="reviewer">Reviewer</option>
+      <option value="admin">Admin / HDM</option>
+      <option value="spec">Engineering Spec</option>
+    </select>
+  </div>
+  <nav class="sidebar-nav" id="sidebar-nav"></nav>
+  <div class="sidebar-user">
+    <div class="user-avatar" id="user-avatar">M</div>
+    <div><div class="user-name" id="user-name">Maria Chen</div><div class="user-role" id="user-role">Expert</div></div>
+  </div>
+</aside>
+<main class="main">
+<div class="topbar">
+  <div><div class="topbar-title" id="topbar-title">Calibration Task</div><div class="topbar-sub" id="topbar-sub">Pipeline Ambrosia ù recommendation eval platform</div></div>
+  <div id="topbar-actions">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+      <svg id="theme-icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1.5a6.5 6.5 0 107.5 7.5A5.5 5.5 0 118 1.5z"/></svg>
+      <span id="theme-toggle-label">Dark mode</span>
+    </button>
+  </div>
+</div>
+
+<div class="page active" id="page-expert-calibration">
+  <div id="calibration-status-banner"></div>
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card card-pad">
+      <div class="card-header">Assigned Calibration <span class="pill pill-purple" id="cal-attempt-badge">v1</span></div>
+      <div class="info-row"><span class="info-key">Calibration ID</span><span class="info-val" id="cal-id">-</span></div>
+      <div class="info-row"><span class="info-key">Market</span><span class="info-val" id="cal-market">-</span></div>
+      <div class="info-row"><span class="info-key">Query</span><span class="info-val" id="cal-query-preview">-</span></div>
+      <div class="info-row"><span class="info-key">Workflow</span><span class="info-val">Search live app, manually capture top 5 results, then evaluate (no API access)</span></div>
+      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" id="cal-start-btn" onclick="openCalibrationEval()">Open Calibration Eval</button>
+        <button class="btn btn-secondary btn-sm" id="cal-resubmit-btn" style="display:none" onclick="openCalibrationEval()">Resubmit (new attempt)</button>
+      </div>
+      <div class="demo-bar">
+        <span style="font-size:11px;color:var(--text3);align-self:center">Demo controls:</span>
+        <button class="btn btn-ghost btn-sm" onclick="demoCalState('not_started')">Not started</button>
+        <button class="btn btn-ghost btn-sm" onclick="demoCalState('pending_review')">Awaiting feedback</button>
+        <button class="btn btn-ghost btn-sm" onclick="demoCalState('needs_rework')">Feedback provided</button>
+        <button class="btn btn-ghost btn-sm" onclick="demoCalState('approved')">Approved</button>
+      </div>
+    </div>
+    <div class="card card-pad">
+      <div class="card-header">Calibration brief</div>
+      <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:10px">Complete one sample eval before production tasking. Per eval brief:</p>
+      <ul style="font-size:12px;color:var(--text2);line-height:1.8;padding-left:18px">
+        <li>Capture top 5 restaurants from live app (name + metadata)</li>
+        <li>Relevance 1-5 + placement: Should appear / Maybe / Should not appear</li>
+        <li>Failure detail only when relevance is low or Should not appear</li>
+        <li>Query-level scales + optional ambiguity / constraint tradeoff fields</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card card-pad">
+    <div class="card-header">Your Submission History</div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Timestamp</th><th>Attempt</th><th>Task</th><th>Market</th><th>Status</th><th>Feedback</th></tr></thead><tbody id="cal-history-tbody"></tbody></table></div>
+  </div>
+</div>
+
+<div class="page" id="page-expert-tasks">
+  <div id="task-gate-banner"></div>
+  <div id="task-dashboard-content">
+    <div class="callout"><strong>Expert view.</strong> Your tasks for market <strong id="expert-market-label">US-SF</strong>. Create a query, capture top 5 results from the live app, then evaluate. Progress: <strong id="progress-label">0 of 0 completed</strong>.</div>
+    <div class="progress-bar-wrap" style="max-width:400px;margin-bottom:16px"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="status-tabs">
+      <div class="status-tab active" onclick="filterExpertTasks('all',this)">All</div>
+      <div class="status-tab" onclick="filterExpertTasks('Draft',this)">Draft</div>
+      <div class="status-tab" onclick="filterExpertTasks('In Progress',this)">In Progress</div>
+      <div class="status-tab" onclick="filterExpertTasks('Submitted',this)">Submitted</div>
+      <div class="status-tab" onclick="filterExpertTasks('Rejected',this)">Rejected</div>
+      <div class="status-tab" onclick="filterExpertTasks('Approved',this)">Approved</div>
+    </div>
+    <div class="search-row">
+      <button class="btn btn-primary" onclick="showPage('expert-create')">+ Create Task</button>
+      <input class="input" placeholder="Search your queries..." style="max-width:280px" id="expert-search" oninput="renderExpertTasks()">
+      <select class="select" style="width:auto" id="expert-cat-filter" onchange="renderExpertTasks()"><option value="">All Categories</option></select>
+    </div>
+    <div class="table-wrap"><table class="task-table"><thead><tr><th>Query</th><th>Task ID</th><th>Category</th><th>Intent Class.</th><th>Status</th><th>Action</th></tr></thead><tbody id="expert-tbody"></tbody></table></div>
+    <div class="pager"><span class="pager-info" id="expert-pager-info"></span></div>
+  </div>
+</div>
+
+<div class="page" id="page-expert-create">
+  <div class="card card-pad" style="max-width:640px">
+    <div class="card-header">Create Eval Task</div>
+    <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:16px">Experts generate queries within assigned categories. After creating a task, search the <strong>live DoorDash app</strong> as an end user, then <strong>manually capture</strong> the top 5 results shown and evaluate them. No API access ù the platform does not pull results automatically.</p>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="eval-field"><label>Query Text</label><input class="input" id="create-query-text" placeholder='e.g. "cheap healthy thai near downtown"'></div>
+      <div class="eval-field"><label>Generation Category</label><select class="select" id="create-category"></select></div>
+      <div class="eval-field"><label>Query Intent Classification</label><select class="select" id="create-intent-class"></select></div>
+      <div class="eval-field"><label>Ambrosia Account Type</label><select class="select" id="create-account-type"><option>DashPass subscriber</option><option>Free tier</option></select></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="createExpertTask()">Create &amp; Open Eval</button>
+        <button class="btn btn-secondary" onclick="showPage('expert-tasks')">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <div class="card card-pad" style="max-width:640px;margin-top:16px">
+    <div class="card-header">Generation brief (categories)</div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Category</th><th>Example Queries</th></tr></thead><tbody id="category-examples-tbody"></tbody></table></div>
+  </div>
+</div>
+
+<div class="page" id="page-expert-eval">
+  <div id="eval-empty" class="callout">Select a task from the dashboard and click <strong>Open Eval</strong>.</div>
+  <div id="eval-workspace-wrap" style="display:none">
+    <div class="task-detail">
+      <div class="task-detail-header">
+        <div>
+          <div class="task-detail-title" id="eval-title"></div>
+          <div style="font-size:12px;color:var(--text3);margin-top:3px" id="eval-meta"></div>
+          <div id="eval-cal-tag" style="display:none;margin-top:6px"><span class="pill pill-purple">Calibration Task</span></div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span id="eval-status-pill"></span>
+          <button class="btn btn-ghost btn-sm" id="eval-json-toggle" onclick="toggleEvalJson()">View JSON</button>
+        </div>
+      </div>
+      <div class="task-detail-body" style="padding:0">
+        <div class="eval-workspace">
+          <div class="eval-main" id="eval-main-panel"></div>
+          <div class="eval-side" id="eval-side-panel"></div>
+        </div>
+        <div style="padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary" id="eval-submit-btn" onclick="submitEval()">Submit evaluation</button>
+          <span style="font-size:12px;color:var(--text3)" id="eval-submit-hint">Complete all required fields before submit</span>
+        </div>
+        <div id="eval-json-block" style="display:none;padding:16px 20px;border-top:1px solid var(--border)">
+          <div class="card-header">Task JSON output <button class="btn btn-ghost btn-sm" onclick="copyEvalJson()">Copy JSON</button></div>
+          <pre id="eval-json-pre" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px;font-size:11px;color:var(--text2);overflow:auto;max-height:280px;font-family:var(--font-mono)"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-expert-onboard">
+  <div class="card card-pad" style="max-width:480px">
+    <div class="card-header">Expert Onboarding</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Required before calibration. Market assignment, eval experience, and availability.</p>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <select class="select"><option>Market: US ù San Francisco</option><option>US ù NYC</option><option>US ù LA</option></select>
+      <select class="select"><option>Eval experience: Search / rec systems</option><option>Food delivery apps</option><option>General relevance eval</option></select>
+      <select class="select"><option>Availability: 10+ hrs/week</option><option>5-10 hrs/week</option></select>
+      <button class="btn btn-primary btn-sm" style="width:fit-content">Save Profile</button>
+    </div>
+    <div class="callout" style="margin-top:16px"><strong>Next step:</strong> Complete the <strong>Calibration</strong> tab and receive reviewer feedback before the Task Dashboard unlocks.</div>
+  </div>
+</div>
+
+<div class="page" id="page-reviewer-flags">
+  <div class="callout callout-warn"><strong><span class="priority-dot"></span>High-priority flagged evals.</strong> Auto-validation runs on every submit. Flagged tasks surface here first  inconsistent placement, missing failure detail on flagged results, or incomplete query fields.</div>
+  <div class="grid-4" style="margin-bottom:16px" id="flag-stats-row"></div>
+  <div class="table-wrap"><table class="task-table"><thead><tr>
+    <th>Priority</th><th>Task ID</th><th>Expert</th><th>Query</th><th>Flags</th><th>Low relevance</th><th>Rank issues</th><th>Action</th>
+  </tr></thead><tbody id="flags-tbody"></tbody></table></div>
+  <div class="task-detail" id="flag-detail" style="display:none;margin-top:16px">
+    <div class="task-detail-header"><div class="task-detail-title" id="flag-detail-title"></div><span class="pill pill-red">High Priority</span></div>
+    <div class="task-detail-body" id="flag-detail-body"></div>
+  </div>
+</div>
+
+<div class="page" id="page-reviewer-queue">
+  <div class="callout"><strong>Two-pass review.</strong> Initial by peers. Final by HDM/SPL for flagged or edge-case evals.</div>
+  <div class="status-tabs">
+    <div class="status-tab active" onclick="filterReview('all',this)">All</div>
+    <div class="status-tab" onclick="filterReview('Initial Review Ready',this)">Initial Ready</div>
+    <div class="status-tab" onclick="filterReview('In Initial Review',this)">In Initial</div>
+    <div class="status-tab" onclick="filterReview('Final Review Ready',this)">Final Ready</div>
+    <div class="status-tab" onclick="filterReview('Flagged',this)">Flagged</div>
+  </div>
+  <div class="table-wrap"><table class="task-table"><thead><tr><th>Task ID</th><th>Expert</th><th>Query</th><th>Market</th><th>Stage</th><th>Flags</th><th>Quality</th><th>Action</th></tr></thead><tbody id="review-tbody"></tbody></table></div>
+  <div class="task-detail" id="review-detail" style="display:none;margin-top:16px">
+    <div class="task-detail-header"><div class="task-detail-title" id="rev-title"></div><div id="rev-flags"></div></div>
+    <div class="task-detail-body">
+      <div id="rev-eval-preview" class="review-readonly"></div>
+      <div class="divider"></div>
+      <div class="card-header">Review checklist</div>
+      <div id="review-checklist"></div>
+      <textarea class="textarea-main" id="rev-reject-note" style="min-height:60px;margin-top:16px" placeholder="Rejection note (required on reject)"></textarea>
+      <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap" id="rev-actions"></div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-admin-dashboard">
+  <div class="grid-4" style="margin-bottom:20px">
+    <div class="stat-card"><div class="stat-label">Evals Completed</div><div class="stat-value">1,842</div><div class="stat-sub">of 4,000 target</div></div>
+    <div class="stat-card"><div class="stat-label">In Pipeline</div><div class="stat-value">286</div><div class="stat-sub">all stages</div></div>
+    <div class="stat-card"><div class="stat-label">Acceptance Rate</div><div class="stat-value">94%</div><div class="stat-sub">7 days</div></div>
+    <div class="stat-card"><div class="stat-label">Avg AHT</div><div class="stat-value">4.2m</div><div class="stat-sub">per task (top 5)</div></div>
+  </div>
+  <div class="card card-pad"><div class="card-header">Market Progress</div>
+    <table class="data-table"><thead><tr><th>Market</th><th>Tasks</th><th>Target</th><th>% Complete</th></tr></thead><tbody id="market-progress-tbody"></tbody></table>
+  </div>
+</div>
+
+
+<div class="page" id="page-admin-tasks">
+  <div class="callout"><strong>All tasks</strong> ù admin view of every expert-generated eval task across the pipeline.</div>
+  <div class="table-wrap"><table class="task-table"><thead><tr><th>Task ID</th><th>Expert</th><th>Query</th><th>Category</th><th>Status</th><th>Market</th></tr></thead><tbody id="admin-tasks-tbody"></tbody></table></div>
+</div>
+
+<div class="page" id="page-admin-calibration">
+  <div class="callout"><strong>Calibration feedback queue</strong> ù reviewers leave feedback on screener submissions. Approve or request rework with notes.</div>
+  <div class="table-wrap"><table class="data-table"><thead><tr>
+    <th>Expert</th><th>Email</th><th>Market</th><th>Attempt</th><th>Submitted</th><th>Status</th><th>Feedback</th><th>Actions</th>
+  </tr></thead><tbody id="admin-cal-tbody"></tbody></table></div>
+</div>
+
+<div class="page" id="page-admin-batches">
+  <div class="callout callout-warn"><strong>Delivery</strong>  JSON eval artifacts + metadata CSV per batch. Client S3 ingest TBD.</div>
+  <table class="data-table"><thead><tr><th>Batch</th><th>Market</th><th>Tasks</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+    <tr><td>Batch 1</td><td>US-SF</td><td>420</td><td><span class="pill pill-green">Delivered</span></td><td><button class="btn btn-ghost btn-sm">eval_metadata.csv</button></td></tr>
+    <tr><td>Batch 1</td><td>US-NYC</td><td>380</td><td><span class="pill pill-amber">In QA</span></td><td><button class="btn btn-primary btn-sm">Export</button></td></tr>
+  </tbody></table>
+</div>
+
+<div class="page" id="page-admin-manage">
+  <div class="grid-2">
+    <div class="card card-pad"><div class="card-header">Management</div>
+      <div class="info-row"><span class="info-key">Task ingest</span><span class="info-val">Expert-created: query, market, tier, intent. Top 5 results captured manually from live app (no API).</span></div>
+      <div class="info-row"><span class="info-key">Expert output</span><span class="info-val">Structured eval JSON: captured results, placement category, conditional failure detail, query-level fields</span></div>
+      <div class="info-row"><span class="info-key">Auto-validation</span><span class="info-val">Runs on submit: completeness, consistency, failure detail checks</span></div>
+    </div>
+    <div class="card card-pad"><div class="card-header">Audit Log</div>
+      <table class="data-table"><tr><td>May 23 14:02</td><td>reviewer_03</td><td>Initial pass</td><td>AMB-0201</td></tr>
+      <tr><td>May 23 13:58</td><td>system</td><td>Missing failure detail flag</td><td>AMB-0198</td></tr></table>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-spec-overview">
+  <div class="overview-section"><h3>Platform Overview</h3><p>Human evaluation with no DoorDash API dependency. Experts generate queries, search the live app as end users, manually capture top-5 results, and submit structured assessments optimized for AHT.</p></div>
+  <div class="overview-section"><h3>Roles</h3><ul><li><strong>Expert</strong> ù create tasks, capture results from live app, evaluate, submit</li><li><strong>Reviewer</strong> ù flagged evals + review queue</li><li><strong>Admin</strong> ù all tasks, calibration feedback, delivery</li></ul></div>
+  <div class="overview-section"><h3>Schema summary (AHT-optimized)</h3><ul>
+    <li><strong>Capture:</strong> top 5 results ù restaurant name, cuisine, price, rating, delivery time (manual from live app)</li>
+    <li><strong>Query-level:</strong> intent classification, complexity 1ù3, quality/diversity/ranking 1ù5, missing category flag, optional ambiguity + constraint tradeoff, optional overall feedback</li>
+    <li><strong>Result-level (all 5):</strong> relevance 1ù5, placement (Should appear / Maybe / Should not appear)</li>
+    <li><strong>Failure-only (relevance ? 2 or Should not appear):</strong> justification, failure tags, dropped constraints</li>
+  </ul></div>
+  <div class="overview-section"><h3>Value beyond CTR / conversion</h3><p>Behavioral metrics show what users click and order, not <em>why</em> results fail intent. This eval surfaces insights DoorDash likely under-captures today:</p><ul>
+    <li><strong>Constraint tradeoffs</strong> ù system satisfies price but drops dietary constraint (INTENT-PARTIAL + dropped-constraint tags)</li>
+    <li><strong>Ambiguity handling</strong> ù how the system interprets vague or compound queries vs. what a user would reasonably expect</li>
+    <li><strong>Ranking failures without engagement</strong> ù buried relevant results (RANK-BURIED) that never get clicks because they're below the fold</li>
+    <li><strong>Diversity gaps</strong> ù redundant chains or missing subcategories in the result set (DIV-* tags)</li>
+    <li><strong>False positives</strong> ù results that look plausible but violate query intent; these may get occasional clicks but erode trust over time</li>
+    <li><strong>Context blindness</strong> ù ignoring time, location, or account tier signals (INTENT-IGNORE-CONTEXT)</li>
+  </ul><p style="margin-top:10px">The failure taxonomy turns these into structured, aggregatable signals ù not just anecdotal reviewer notes.</p></div>
+</div>
+
+<div class="page" id="page-spec-pipeline">
+  <div class="overview-section"><h3>Expert workflow (no API)</h3><ol style="padding-left:18px;color:var(--text2);line-height:2"><li>Create query in platform</li><li>Open live DoorDash app (assigned market + account tier)</li><li>Run query, capture top 5 results manually</li><li>Rate relevance + placement for each</li><li>Expand failure detail only on flagged results</li><li>Submit ù auto-validation runs</li></ol></div>
+  <div class="overview-section"><h3>Validation on submit</h3><ol style="padding-left:18px;color:var(--text2);line-height:2"><li>All 5 results captured (restaurant name required)</li><li>All 5: relevance + placement filled</li><li>Failure results: justification + ?1 failure tag</li><li>Query-level scales complete</li><li>Consistency: high relevance + Should not appear, or low relevance + Should appear</li></ol></div>
+</div>
+
+<div class="page" id="page-spec-states">
+  <div class="overview-section"><h3>State Machine</h3><div class="state-flow" id="state-flow-display"></div>
+  <table class="data-table" style="margin-top:16px"><thead><tr><th>From</th><th>To</th><th>By</th><th>Notes</th></tr></thead><tbody id="state-transitions"></tbody></table></div>
+</div>
+
+<div class="page" id="page-spec-markets">
+  <div class="card-header">Batch 1 Markets</div>
+  <div class="table-wrap"><table class="data-table"><thead><tr><th>Market ID</th><th>City</th><th>Timezone</th></tr></thead><tbody id="markets-tbody"></tbody></table></div>
+</div>
+</main>
+
+<div class="qc-overlay" id="qc-overlay">
+  <div class="qc-modal">
+    <div class="qc-modal-header">
+      <div><div class="qc-modal-title" id="qc-modal-title">Running Auto-Validation</div><div style="font-size:12px;color:var(--text3);margin-top:3px" id="qc-modal-sub">Analyzing submission...</div></div>
+      <button class="btn btn-ghost btn-sm" id="qc-modal-close" style="display:none" onclick="closeQcModal()">Close</button>
+    </div>
+    <div class="qc-modal-body">
+      <div id="qc-pipeline-steps"></div>
+      <div id="qc-flags-panel" style="display:none;margin-top:14px">
+        <div class="card-header">Validation Flags</div>
+        <div id="qc-flag-list"></div>
+      </div>
+      <div id="qc-done-panel" style="display:none;margin-top:16px">
+        <div class="callout callout-ok" id="qc-done-msg"></div>
+        <button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="closeQcModal()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const FAILURE_TAXONOMY={
+  intent:['INTENT-LITERAL','INTENT-PARTIAL','INTENT-OVERGENERALIZE','INTENT-MISMATCH','INTENT-IGNORE-CONTEXT'],
+  ranking:['RANK-BURIED','RANK-POPULARITY-BIAS','RANK-PROMO-BIAS'],
+  diversity:['DIV-REDUNDANT','DIV-MISSING-SUBCATEGORY','DIV-CHAIN-DOMINANT']
+};
+const ALL_FAILURE_TAGS=[...FAILURE_TAXONOMY.intent,...FAILURE_TAXONOMY.ranking,...FAILURE_TAXONOMY.diversity];
+const INTENT_CLASSIFICATIONS=['Cuisine-specific','Dietary/lifestyle','Price-driven','Occasion-based','Quality/rating-driven','Speed-driven','Exploration/discovery','Compound (multi-constraint)'];
+const GENERATION_CATEGORIES=[
+  {id:'cuisine',label:'Cuisine-specific',examples:'"thai food", "indian curry", "authentic mexican"'},
+  {id:'dietary',label:'Dietary / Lifestyle',examples:'"vegan options", "gluten-free", "keto friendly"'},
+  {id:'price',label:'Price-driven',examples:'"cheap eats", "best deals", "fancy dinner"'},
+  {id:'occasion',label:'Occasion-based',examples:'"date night", "late night food", "birthday brunch"'},
+  {id:'quality',label:'Quality / Rating-driven',examples:'"best restaurants", "top rated", "best pizza"'},
+  {id:'speed',label:'Speed-driven',examples:'"fast delivery", "quick lunch"'},
+  {id:'explore',label:'Exploration / Discovery',examples:'"something new", "popular near me"'},
+  {id:'compound',label:'Compound',examples:'"cheap healthy thai", "fast vegan lunch under $15"'}
+];
+const TOP_N=5;
+const SCALE_1_3=[1,2,3];
+const SCALE_1_5=[1,2,3,4,5];
+const PLACEMENT_OPTIONS=['Should appear','Maybe','Should not appear'];
+const DROPPED_CONSTRAINTS=['Price','Dietary / lifestyle','Cuisine','Location / distance','Speed / delivery','Quality / rating','Occasion'];
+const MARKETS=[['US-SF','San Francisco, CA','PT'],['US-NYC','New York, NY','ET'],['US-LA','Los Angeles, CA','PT']];
+const STATES=['Draft','In Progress','Submitted','Auto-Validate','Flagged','Initial Review Ready','In Initial Review','Final Review Ready','In Final Review','Approved','Delivered'];
+const TRANSITIONS=[
+['Draft','In Progress','Expert','Creates task + opens eval'],
+['In Progress','Submitted','Expert','Eval completed + submitted'],
+['Submitted','Auto-Validate','System','Validation pipeline runs'],
+['Auto-Validate','Initial Review Ready','System','All checks pass'],
+['Auto-Validate','Flagged','System','Consistency or completeness flags'],
+['Initial Review Ready','In Initial Review','Reviewer','Reviewer claims'],
+['In Initial Review','Approved','Reviewer','Pass without final'],
+['In Initial Review','In Progress','Reviewer','Reject with note'],
+['Approved','Delivered','Admin','Batch export to client']
+];
+const NAV={
+expert:[
+  {id:'expert-calibration',label:'Calibration',icon:'M8 2a6 6 0 100 12A6 6 0 008 2zM8 6v4M8 12h.01'},
+  {id:'expert-tasks',label:'My Tasks',icon:'M2 4h12M2 8h12M2 12h8',gate:true},
+  {id:'expert-create',label:'Create Task',icon:'M8 2v12M4 6h8',gate:true},
+  {id:'expert-eval',label:'Eval Interface',icon:'M8 2v12M5 5h6M5 11h6'},
+  {id:'expert-onboard',label:'Onboarding',icon:'M8 8a3 3 0 100-6 3 3 0 000 6zM2 14s2-4 6-4 6 4 6 4'}
+],
+reviewer:[{id:'reviewer-flags',label:'Flagged Evals',icon:'M8 2a6 6 0 100 12A6 6 0 008 2zM8 6v4'},{id:'reviewer-queue',label:'Review Queue',icon:'M3 12l3-4 3 2 4-6'}],
+admin:[{id:'admin-dashboard',label:'Dashboard',icon:'M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z'},{id:'admin-tasks',label:'All Tasks',icon:'M2 4h12M2 8h8M2 12h10'},{id:'admin-calibration',label:'Calibration Feedback',icon:'M8 2a6 6 0 100 12A6 6 0 008 2z'},{id:'admin-batches',label:'Batches & Delivery',icon:'M2 6h12l-1 8H3L2 6z'},{id:'admin-manage',label:'Manage & Audit',icon:'M4 4h8v8H4z'}],
+spec:[{id:'spec-overview',label:'Overview',icon:'M2 4h12M2 8h8M2 12h10'},{id:'spec-pipeline',label:'Pipeline & Metadata',icon:'M8 2v12M4 6h8'},{id:'spec-states',label:'State Machine',icon:'M2 8h4l2 4 2-4h4'},{id:'spec-markets',label:'Markets',icon:'M2 2h12v12H2z'}]
+};
+const TITLES={'expert-calibration':'Calibration Task','expert-tasks':'My Tasks','expert-create':'Create Task','expert-eval':'Eval Interface','expert-onboard':'Onboarding','reviewer-flags':'Flagged Evals (High Priority)','reviewer-queue':'Review Queue','admin-dashboard':'Admin Dashboard','admin-tasks':'All Tasks','admin-calibration':'Calibration Feedback','admin-batches':'Batches & Delivery','admin-manage':'Manage & Audit','spec-overview':'Engineering Spec','spec-pipeline':'Pipeline & Metadata','spec-states':'State Machine','spec-markets':'Markets'};
+const REVIEW_CHECKLIST=['Captured results match live app snapshot','Query-level scales align with result assessments','Placement consistent with relevance scores','Failure detail present on flagged results (justification + tags)','Constraint tradeoffs tagged when INTENT-PARTIAL'];
+const VALIDATION_STEPS=[{id:'capture',name:'Result Capture',desc:'All 5 results: restaurant name from live app'},{id:'complete',name:'Completeness',desc:'All 5: relevance + placement category'},{id:'query',name:'Query Fields',desc:'Required query-level scales'},{id:'consistency',name:'Consistency',desc:'Placement vs relevance alignment'},{id:'tags',name:'Failure Detail',desc:'Justification + tags on failure results only'}];
+const EXPERT_MARKET='US-SF';
+const EXPERT_ID='EXP-017';
+const EXPERT_PROFILE={first:'Maria',last:'Chen',email:'maria.chen@expert.micro1.ai',market:'US-SF',calibrationStatus:'not_started',accountType:'DashPass subscriber'};
+let taskSeq=210;
+let CALIBRATION_SUBMISSIONS=[{id:1,expert_email:EXPERT_PROFILE.email,timestamp:'May 10, 2026 7:51 PM',attempt:1,taskId:'CAL-001',market:'US-SF',reviewStatus:'Needs rework',feedback:'Placement inconsistent with relevance on result #2'}];
+let currentRole='expert',currentPage='expert-calibration',expertFilter='all',reviewFilter='all';
+let currentEvalTask=null,currentEvalIsCalibration=false,qcPendingTask=null,qcPendingCallback=null;
+
+function emptyResults(prefix){
+  return Array.from({length:TOP_N},(_,i)=>({id:prefix+'-r'+(i+1),rank:i+1,name:'',cuisine:'',price:'',rating:'',delivery_min:''}));
+}
+function demoResults(prefix,rows){
+  return rows.map((d,i)=>({id:prefix+'-r'+(i+1),rank:i+1,name:d[0],cuisine:d[1],price:d[2],rating:d[3],delivery_min:d[4]}));
+}
+const DEMO_ROWS=[['Gracias Madre','Mexican','$$','4.6','22'],['The Habit Burger Grill','Burgers','$','4.2','18'],['Shizen','Japanese','$$$','4.8','35'],['Wildseed','American','$$','4.5','25'],['Plant Cafe Organic','Organic','$$','4.4','28']];
+
+const CALIBRATION_TASK={id:'CAL-001',isCalibration:true,query:'cheap vegan spots near me',category:'compound',intentClassification:'Compound (multi-constraint)',market:'US-SF',location:'San Francisco, CA',time:'7:45 PM',status:'In Progress',expert_id:EXPERT_ID,results:emptyResults('cal'),submission:null};
+
+let TASKS=[
+  {id:'AMB-0201',query:'late night pizza delivery',category:'speed',intentClassification:'Speed-driven',market:EXPERT_MARKET,location:'San Francisco, CA',time:'11:30 PM',status:'Submitted',expert_id:EXPERT_ID,results:demoResults('t1',DEMO_ROWS),reviewStage:'Initial Review Ready',flags:['INCONSISTENT_PLACEMENT'],submission:null},
+  {id:'AMB-0202',query:'gluten free brunch under $20',category:'compound',intentClassification:'Compound (multi-constraint)',market:EXPERT_MARKET,location:'San Francisco, CA',time:'10:00 AM',status:'In Progress',expert_id:EXPERT_ID,results:emptyResults('t2'),submission:null},
+  {id:'AMB-0203',query:'best sushi near financial district',category:'quality',intentClassification:'Quality/rating-driven',market:EXPERT_MARKET,location:'San Francisco, CA',time:'7:00 PM',status:'Approved',expert_id:EXPERT_ID,results:demoResults('t3',DEMO_ROWS),submission:null},
+  {id:'AMB-0199',query:'cheap healthy thai',category:'compound',intentClassification:'Compound (multi-constraint)',market:EXPERT_MARKET,location:'San Francisco, CA',time:'6:00 PM',status:'Submitted',expert_id:'EXP-042',results:demoResults('t4',DEMO_ROWS),reviewStage:'Initial Review Ready',flags:['QUERY_INCOMPLETE'],submission:null}
+];
+
+function defaultSubmission(task){
+  return{
+    evaluator_id:EXPERT_ID,account_type:EXPERT_PROFILE.accountType,timestamp:new Date().toISOString(),
+    query_assessment:{query_text:task.query,intent_classification:task.intentClassification,intent_complexity:2,overall_result_quality:3,result_set_diversity:2,ranking_quality:2,missing_category_flag:'yes',missing_category_detail:'Expected more dedicated vegan options',query_ambiguity_flag:'no',query_ambiguity_detail:'',constraint_tradeoff_flag:'yes',constraint_tradeoff_detail:'Matched on price, dropped vegan constraint on result #2',overall_feedback:'System partially understood dietary intent but ranked budget matches above vegan matches.'},
+    results:task.results.map((r,i)=>({position:r.rank,restaurant_name:r.name,cuisine:r.cuisine,price:r.price,rating:r.rating,delivery_min:r.delivery_min,relevance_1_5:i===1?1:i===2?3:4,placement:i===1?'Should not appear':i===2?'Maybe':'Should appear',relevance_justification:i===1?'Not vegan - matched on price only':i===2?'Vegan but too expensive for cheap constraint':'',failure_tags:i<=1?['INTENT-PARTIAL']:i===2?['INTENT-PARTIAL']:[],dropped_constraints:i===1?['Dietary / lifestyle','Price']:i===2?['Price']:[]}))
+  };
+}
+TASKS[0].submission=defaultSubmission(TASKS[0]);TASKS[0].qc=simulateValidation(TASKS[0].submission,true);TASKS[0].flags=TASKS[0].qc.flags.map(f=>f.code);
+
+function scaleOptions(sel,val){return SCALE_1_5.map(n=>`<option value="${n}"${String(val)===String(n)?' selected':''}>${n}</option>`).join('');}
+function scaleOptions3(sel,val){return SCALE_1_3.map(n=>`<option value="${n}"${String(val)===String(n)?' selected':''}>${n}</option>`).join('');}
+function isFailureResult(rel,placement){const r=parseInt(rel,10);return r<=2||placement==='Should not appear';}
+function placementBtnClass(p){return p==='Should appear'?'appear':p==='Maybe'?'maybe':'no-appear';}
+function syncResultCapture(){if(!currentEvalTask)return;currentEvalTask.results.forEach(r=>{r.name=document.getElementById(r.id+'-name')?.value.trim()||'';r.cuisine=document.getElementById(r.id+'-cuisine')?.value.trim()||'';r.price=document.getElementById(r.id+'-price')?.value.trim()||'';r.rating=document.getElementById(r.id+'-rating')?.value.trim()||'';r.delivery_min=document.getElementById(r.id+'-delivery')?.value.trim()||'';});}
+function getPlacement(rid){return document.querySelector(`input[name="${rid}-placement"]:checked`)?.value||'';}
+function setPlacement(rid,val){document.querySelectorAll(`input[name="${rid}-placement"]`).forEach(inp=>{inp.checked=inp.value===val;const btn=inp.closest('.sb');if(btn)btn.classList.toggle('active-score',inp.checked);});}
+function selectPlacement(rid,val){setPlacement(rid,val);updateFailurePanel(rid);}
+function updateFailurePanel(rid){const rel=document.getElementById(rid+'-relevance')?.value;const pl=getPlacement(rid);const panel=document.getElementById(rid+'-failure');const card=document.getElementById(rid);const fail=isFailureResult(rel,pl);if(panel)panel.classList.toggle('show',!!fail);if(card){card.classList.remove('passing','partial','flagged');if(rel&&pl){if(fail)card.classList.add('flagged');else if(pl==='Maybe')card.classList.add('partial');else card.classList.add('passing');}}updateEvalJson();}
+function toggleConstraint(btn){btn.classList.toggle('active-chip');updateEvalJson();}
+function toggleAmbiguityDetail(){const w=document.getElementById('ambiguity-detail-wrap');const v=document.getElementById('qa-ambiguity-flag')?.value;if(w)w.style.display=v==='yes'?'block':'none';}
+function toggleTradeoffDetail(){const w=document.getElementById('tradeoff-detail-wrap');const v=document.getElementById('qa-tradeoff-flag')?.value;if(w)w.style.display=v==='yes'?'block':'none';}
+
+function isCalibrationApproved(){return EXPERT_PROFILE.calibrationStatus==='approved';}
+function calPill(status){const m={not_started:'pill-gray',pending_review:'pill-amber',needs_rework:'pill-red',approved:'pill-green'};const l={not_started:'Not Started',pending_review:'Awaiting Feedback',needs_rework:'Feedback Provided',approved:'Approved'};return `<span class="pill ${m[status]||'pill-gray'}">${l[status]||status}</span>`;}
+function pill(st){const m={'Draft':'pill-gray','In Progress':'pill-blue','Submitted':'pill-teal','Rejected':'pill-red','Approved':'pill-green','Initial Review Ready':'pill-amber','In Initial Review':'pill-amber','Final Review Ready':'pill-purple','Flagged':'pill-red'};return `<span class="pill ${m[st]||'pill-gray'}">${st}</span>`;}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800);}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+const THEME_KEY='ambrosia-theme';
+function applyTheme(theme){document.documentElement.dataset.theme=theme;document.body.dataset.theme=theme;localStorage.setItem(THEME_KEY,theme);const label=document.getElementById('theme-toggle-label');if(label)label.textContent=theme==='dark'?'Light mode':'Dark mode';}
+function toggleTheme(){applyTheme(document.body.dataset.theme==='dark'?'light':'dark');}
+function initTheme(){applyTheme(localStorage.getItem(THEME_KEY)||'light');}
+
+function switchRole(role){currentRole=role;const names={expert:'Maria Chen',reviewer:'Oliver Beuthin',admin:'Roman Mansur',spec:'Engineering'};const roles={expert:'Expert',reviewer:'Reviewer',admin:'Admin / HDM',spec:'Spec'};document.getElementById('user-name').textContent=names[role];document.getElementById('user-role').textContent=roles[role];document.getElementById('user-avatar').textContent=names[role][0];renderNav();const first=(NAV[role]||[])[0]?.id;if(role==='expert'&&!isCalibrationApproved())showPage('expert-calibration');else if(first)showPage(first);}
+
+function renderNav(){const nav=document.getElementById('sidebar-nav');const items=NAV[currentRole]||[];const locked=currentRole==='expert'&&!isCalibrationApproved();nav.innerHTML=items.map(n=>{const isLocked=n.gate&&locked;let label=n.label;if(n.id==='reviewer-flags'){const c=getFlaggedTasks().length;if(c)label+=' ('+c+')';}return `<div class="nav-item${isLocked?' locked':''}" onclick="navClick('${n.id}')" id="nav-${n.id}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="${n.icon}"/></svg><span>${label}</span></div>`;}).join('');}
+
+function navClick(id){if((id==='expert-tasks'||id==='expert-create')&&!isCalibrationApproved()){showPage('expert-calibration');return;}showPage(id);}
+
+function showPage(id){currentPage=id;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));const page=document.getElementById('page-'+id);if(page)page.classList.add('active');const nav=document.getElementById('nav-'+id);if(nav)nav.classList.add('active');document.getElementById('topbar-title').textContent=TITLES[id]||id;document.getElementById('topbar-sub').textContent=currentRole==='spec'?'Build reference for engineering team':'Pipeline Ambrosia - '+currentRole+' view';if(id==='expert-calibration')renderCalibrationPage();if(id==='expert-tasks'){renderTaskGate();renderExpertTasks();}if(id==='expert-create')renderCreatePage();if(id==='reviewer-flags')renderFlagsPage();if(id==='reviewer-queue')renderReviewQueue();if(id==='admin-calibration')renderAdminCalibration();if(id==='admin-tasks')renderAdminTasks();}
+
+function renderTaskGate(){const banner=document.getElementById('task-gate-banner');const content=document.getElementById('task-dashboard-content');if(!banner||!content)return;if(isCalibrationApproved()){banner.innerHTML=`<div class="lock-banner ok"><strong>Calibration approved.</strong> Create and evaluate your own tasks for ${EXPERT_MARKET}.</div>`;content.style.opacity='1';content.style.pointerEvents='auto';return;}banner.innerHTML=`<div class="lock-banner"><strong>Task dashboard locked.</strong> Pass calibration first. <button class="btn btn-primary btn-sm" style="margin-left:10px" onclick="showPage('expert-calibration')">Go to Calibration</button></div>`;content.style.opacity='0.35';content.style.pointerEvents='none';}
+
+function renderCreatePage(){const catSel=document.getElementById('create-category');const intentSel=document.getElementById('create-intent-class');if(catSel)catSel.innerHTML=GENERATION_CATEGORIES.map(c=>`<option value="${c.id}">${c.label}</option>`).join('');if(intentSel)intentSel.innerHTML=INTENT_CLASSIFICATIONS.map(i=>`<option>${i}</option>`).join('');const ex=document.getElementById('category-examples-tbody');if(ex)ex.innerHTML=GENERATION_CATEGORIES.map(c=>`<tr><td>${c.label}</td><td style="color:var(--text3)">${c.examples}</td></tr>`).join('');const filt=document.getElementById('expert-cat-filter');if(filt&&filt.options.length<=1)filt.innerHTML='<option value="">All Categories</option>'+GENERATION_CATEGORIES.map(c=>`<option value="${c.id}">${c.label}</option>`).join('');}
+
+function createExpertTask(){if(!isCalibrationApproved()){alert('Pass calibration first.');return;}const query=document.getElementById('create-query-text').value.trim();if(!query){alert('Enter a query.');return;}const cat=document.getElementById('create-category').value;const intent=document.getElementById('create-intent-class').value;const acct=document.getElementById('create-account-type').value;EXPERT_PROFILE.accountType=acct;taskSeq++;const t={id:'AMB-'+taskSeq,query,category:cat,intentClassification:intent,market:EXPERT_MARKET,location:'San Francisco, CA',time:new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}),status:'In Progress',expert_id:EXPERT_ID,results:emptyResults('n'+taskSeq),submission:null,accountType:acct};TASKS.unshift(t);showToast('Task created');openEval(t);}
+
+function getNextCalAttempt(){const subs=CALIBRATION_SUBMISSIONS.filter(s=>s.expert_email===EXPERT_PROFILE.email);return subs.length?Math.max(...subs.map(s=>s.attempt))+1:1;}
+
+function renderCalibrationPage(){const attempt=getNextCalAttempt();const st=EXPERT_PROFILE.calibrationStatus;document.getElementById('calibration-status-banner').innerHTML=st==='approved'?`<div class="lock-banner ok"><strong>Calibration complete.</strong> Task dashboard unlocked. ${calPill(st)}</div>`:st==='pending_review'?`<div class="callout callout-warn"><strong>Submitted ù awaiting reviewer feedback.</strong> ${calPill(st)}</div>`:st==='needs_rework'?`<div class="lock-banner"><strong>Reviewer left feedback.</strong> Review notes below and resubmit as v${attempt}. ${calPill(st)}</div>`:`<div class="callout"><strong>Calibration required</strong> before production tasking. ${calPill(st)}</div>`;document.getElementById('cal-id').textContent=CALIBRATION_TASK.id;document.getElementById('cal-market').textContent=CALIBRATION_TASK.market;document.getElementById('cal-query-preview').textContent=CALIBRATION_TASK.query;document.getElementById('cal-attempt-badge').textContent='next: v'+attempt;document.getElementById('cal-start-btn').style.display=(st==='not_started'||st==='needs_rework')?'inline-flex':'none';document.getElementById('cal-resubmit-btn').style.display=(st==='needs_rework'&&attempt>1)?'inline-flex':'none';const subs=CALIBRATION_SUBMISSIONS.filter(s=>s.expert_email===EXPERT_PROFILE.email);document.getElementById('cal-history-tbody').innerHTML=subs.length?subs.map(s=>{const statusPill=s.reviewStatus==='Approved'?'<span class="pill pill-green">Approved</span>':s.reviewStatus?`<span class="pill pill-red">${s.reviewStatus}</span>`:'<span class="pill pill-amber">Awaiting feedback</span>';return `<tr><td>${s.timestamp}</td><td>v${s.attempt}</td><td>${s.taskId}</td><td>${s.market}</td><td>${statusPill}</td><td style="color:var(--text3)">${s.feedback||'-'}</td></tr>`;}).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--text3)">No submissions yet</td></tr>';renderNav();renderTaskGate();}
+function demoCalState(state){EXPERT_PROFILE.calibrationStatus=state;renderCalibrationPage();}
+
+function myTasks(){return TASKS.filter(t=>t.expert_id===EXPERT_ID&&!t.isCalibration);}
+
+function filterExpertTasks(status,el){document.querySelectorAll('#page-expert-tasks .status-tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');expertFilter=status;renderExpertTasks();}
+
+function renderExpertTasks(){renderCreatePage();const q=(document.getElementById('expert-search')?.value||'').toLowerCase();const cat=document.getElementById('expert-cat-filter')?.value||'';const ft=myTasks().filter(t=>(expertFilter==='all'||t.status===expertFilter)&&(!q||t.query.toLowerCase().includes(q)||t.id.toLowerCase().includes(q))&&(!cat||t.category===cat));const completed=myTasks().filter(t=>t.status==='Approved').length;const total=myTasks().length;const pl=document.getElementById('progress-label');if(pl)pl.textContent=completed+' of '+total+' completed';const pf=document.getElementById('progress-fill');if(pf)pf.style.width=total?Math.round(completed/total*100)+'%':'0%';document.getElementById('expert-tbody').innerHTML=ft.map(t=>{const catLabel=GENERATION_CATEGORIES.find(c=>c.id===t.category)?.label||t.category;const act=t.status==='Draft'||t.status==='In Progress'?`<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openEval('${t.id}')">Continue Eval</button>`:`<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openEval('${t.id}')">View</button>`;return `<tr onclick="openEval('${t.id}')"><td title="${t.query}">${t.query.slice(0,42)}</td><td>${t.id}</td><td>${catLabel}</td><td>${t.intentClassification}</td><td>${pill(t.status)}</td><td>${act}</td></tr>`;}).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--text3)">No tasks yet - click Create Task</td></tr>';document.getElementById('expert-pager-info').textContent=ft.length+' tasks';}
+
+function renderAdminTasks(){const tbody=document.getElementById('admin-tasks-tbody');if(!tbody)return;tbody.innerHTML=TASKS.filter(t=>!t.isCalibration).map(t=>{const catLabel=GENERATION_CATEGORIES.find(c=>c.id===t.category)?.label||t.category;return `<tr><td>${t.id}</td><td>${t.expert_id}</td><td title="${t.query}">${t.query.slice(0,36)}</td><td>${catLabel}</td><td>${pill(t.status)}</td><td>${t.market}</td></tr>`;}).join('');}
+
+function openCalibrationEval(){if(EXPERT_PROFILE.calibrationStatus==='pending_review'){alert('Awaiting reviewer feedback.');return;}openEval({...CALIBRATION_TASK,attempt:getNextCalAttempt()},true);}
+
+function openEval(taskOrId,isCalibration){const t=typeof taskOrId==='object'?taskOrId:TASKS.find(x=>x.id===taskOrId)||(taskOrId==='CAL-001'?CALIBRATION_TASK:null);if(!t)return;if(!isCalibration&&!isCalibrationApproved()){alert('Pass calibration first.');showPage('expert-calibration');return;}if(t.status==='Draft')t.status='In Progress';currentEvalTask=t;currentEvalIsCalibration=!!(isCalibration||t.isCalibration);showPage('expert-eval');document.getElementById('eval-empty').style.display='none';document.getElementById('eval-workspace-wrap').style.display='block';document.getElementById('eval-cal-tag').style.display=currentEvalIsCalibration?'block':'none';document.getElementById('eval-title').textContent=currentEvalIsCalibration?'Calibration v'+(t.attempt||1):t.id;document.getElementById('eval-meta').textContent=t.market+' | '+t.intentClassification+' | '+t.location;document.getElementById('eval-status-pill').innerHTML=currentEvalIsCalibration?calPill(EXPERT_PROFILE.calibrationStatus):pill(t.status);renderEvalInterface(t);}
+
+function renderEvalInterface(task){const sub=task.submission||null;const qa=sub?.query_assessment||{};document.getElementById('eval-main-panel').innerHTML=`
+<div class="callout"><strong>No API access.</strong> Capture exactly what you see in the live app for ranks 1-${TOP_N}. Rate relevance (1-5) and placement (Should appear / Maybe / Should not appear). Failure detail expands only on flagged results.</div>
+<div class="query-eval"><div class="query-eval-title">Query-level assessment</div>
+<div class="query-eval-grid">
+<div class="eval-field"><label>Query Text</label><input class="input" id="qa-query-text" value="${(qa.query_text||task.query).replace(/"/g,'&quot;')}" oninput="updateEvalJson()"></div>
+<div class="eval-field"><label>Query Intent Classification</label><select class="select" id="qa-intent-class" onchange="updateEvalJson()">${INTENT_CLASSIFICATIONS.map(i=>`<option${(qa.intent_classification||task.intentClassification)===i?' selected':''}>${i}</option>`).join('')}</select></div>
+<div class="eval-field"><label>Intent Complexity (1-3)</label><select class="select" id="qa-complexity" onchange="updateEvalJson()"><option value="">Select...</option>${scaleOptions3('',qa.intent_complexity)}</select></div>
+<div class="eval-field"><label>Account Type</label><select class="select" id="qa-account" onchange="updateEvalJson()"><option${(sub?.account_type||EXPERT_PROFILE.accountType)==='DashPass subscriber'?' selected':''}>DashPass subscriber</option><option${(sub?.account_type||EXPERT_PROFILE.accountType)==='Free tier'?' selected':''}>Free tier</option></select></div>
+<div class="eval-field"><label>Overall Result Quality (1-5)</label><select class="select" id="qa-quality" onchange="updateEvalJson()"><option value="">Select...</option>${scaleOptions('',qa.overall_result_quality)}</select></div>
+<div class="eval-field"><label>Result Set Diversity (1-5)</label><select class="select" id="qa-diversity" onchange="updateEvalJson()"><option value="">Select...</option>${scaleOptions('',qa.result_set_diversity)}</select></div>
+<div class="eval-field"><label>Ranking Quality (1-5)</label><select class="select" id="qa-ranking" onchange="updateEvalJson()"><option value="">Select...</option>${scaleOptions('',qa.ranking_quality)}</select></div>
+<div class="eval-field"><label>Missing Category Flag</label><select class="select" id="qa-missing-flag" onchange="toggleMissingDetail();updateEvalJson()"><option value="">Select...</option><option value="no"${qa.missing_category_flag==='no'?' selected':''}>No</option><option value="yes"${qa.missing_category_flag==='yes'?' selected':''}>Yes</option></select></div>
+</div>
+<div class="eval-field" id="missing-detail-wrap" style="margin-top:10px;${qa.missing_category_flag==='yes'?'':'display:none'}"><label>Missing Category Detail <span class="optional">optional</span></label><input class="input" id="qa-missing-detail" value="${(qa.missing_category_detail||'').replace(/"/g,'&quot;')}" oninput="updateEvalJson()" placeholder="What types were expected but not seen?"></div>
+<div class="query-eval-grid wide" style="margin-top:10px;grid-template-columns:1fr 1fr">
+<div class="eval-field"><label>Query Ambiguity <span class="optional">optional</span></label><select class="select" id="qa-ambiguity-flag" onchange="toggleAmbiguityDetail();updateEvalJson()"><option value="">Select...</option><option value="no"${qa.query_ambiguity_flag==='no'?' selected':''}>No ù clear intent</option><option value="yes"${qa.query_ambiguity_flag==='yes'?' selected':''}>Yes ù ambiguous</option></select></div>
+<div class="eval-field"><label>Constraint Tradeoff <span class="optional">optional</span></label><select class="select" id="qa-tradeoff-flag" onchange="toggleTradeoffDetail();updateEvalJson()"><option value="">Select...</option><option value="no"${qa.constraint_tradeoff_flag==='no'?' selected':''}>No</option><option value="yes"${qa.constraint_tradeoff_flag==='yes'?' selected':''}>Yes ù system dropped a constraint</option></select></div>
+</div>
+<div class="eval-field" id="ambiguity-detail-wrap" style="margin-top:10px;${qa.query_ambiguity_flag==='yes'?'':'display:none'}"><label>How did the system interpret ambiguity? <span class="optional">optional</span></label><input class="input" id="qa-ambiguity-detail" value="${(qa.query_ambiguity_detail||'').replace(/"/g,'&quot;')}" oninput="updateEvalJson()" placeholder="e.g. interpreted cheap as low-rated, not low price"></div>
+<div class="eval-field" id="tradeoff-detail-wrap" style="margin-top:10px;${qa.constraint_tradeoff_flag==='yes'?'':'display:none'}"><label>Which constraints were traded off? <span class="optional">optional</span></label><input class="input" id="qa-tradeoff-detail" value="${(qa.constraint_tradeoff_detail||'').replace(/"/g,'&quot;')}" oninput="updateEvalJson()" placeholder="e.g. matched price, dropped dietary"></div>
+<div class="eval-field" style="margin-top:10px"><label>Overall Feedback <span class="optional">optional</span></label><textarea class="textarea-main" id="qa-feedback" oninput="updateEvalJson()" placeholder="Holistic notes ù only if helpful. Most signal comes from structured fields.">${qa.overall_feedback||''}</textarea></div>
+</div>
+<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin:14px 0 10px">Top ${TOP_N} results ù capture from live app, then evaluate</div>
+<div id="results-container"></div>`;
+renderResultCards(task,sub);renderEvalSidePanel();updateEvalJson();}
+
+function renderResultCards(task,sub){
+  document.getElementById('results-container').innerHTML=task.results.map(r=>{
+    const saved=sub?.results?.find(x=>x.position===r.rank);
+    const rel=saved?.relevance_1_5||'';
+    const pl=saved?.placement||'';
+    const dropped=saved?.dropped_constraints||[];
+    const tags=ALL_FAILURE_TAGS.map(t=>`<button type="button" class="tax-tag${(saved?.failure_tags||[]).includes(t)?' active-tag':''}" onclick="toggleTag(this);updateEvalJson()">${t}</button>`).join('');
+    const constraints=DROPPED_CONSTRAINTS.map(c=>`<button type="button" class="constraint-chip${dropped.includes(c)?' active-chip':''}" onclick="toggleConstraint(this)">${c}</button>`).join('');
+    const fail=isFailureResult(rel,pl);
+    return `<div class="result-card${fail?' flagged':pl==='Maybe'?' partial':rel&&pl?' passing':''}" id="${r.id}">
+<div class="card-head"><span class="rank-num">#${r.rank}</span><span style="font-size:11px;color:var(--text3)">Capture from live app</span></div>
+<div class="card-body">
+<div class="capture-grid">
+<div class="eval-field"><label>Restaurant name *</label><input class="input" id="${r.id}-name" value="${(r.name||'').replace(/"/g,'&quot;')}" oninput="updateEvalJson()" placeholder="As shown in app"></div>
+<div class="eval-field"><label>Cuisine</label><input class="input" id="${r.id}-cuisine" value="${(r.cuisine||'').replace(/"/g,'&quot;')}" oninput="updateEvalJson()" placeholder="e.g. Thai"></div>
+<div class="eval-field"><label>Price</label><input class="input" id="${r.id}-price" value="${(r.price||'').replace(/"/g,'&quot;')}" oninput="updateEvalJson()" placeholder="$$"></div>
+<div class="eval-field"><label>Rating</label><input class="input" id="${r.id}-rating" value="${(r.rating||'').replace(/"/g,'&quot;')}" oninput="updateEvalJson()" placeholder="4.5"></div>
+<div class="eval-field"><label>ETA (min)</label><input class="input" id="${r.id}-delivery" value="${(r.delivery_min||'').replace(/"/g,'&quot;')}" oninput="updateEvalJson()" placeholder="25"></div>
+</div>
+<div class="query-eval-grid wide" style="grid-template-columns:1fr 1fr;margin-top:10px">
+<div class="eval-field"><label>Relevance (1-5) *</label><select class="select" id="${r.id}-relevance" onchange="updateFailurePanel('${r.id}')"><option value="">Select...</option>${scaleOptions('',rel)}</select></div>
+<div class="eval-field"><label>Placement *</label>
+<div class="placement-btns">${PLACEMENT_OPTIONS.map(p=>`<label class="sb ${placementBtnClass(p)}${pl===p?' active-score':''}" onclick="selectPlacement('${r.id}','${p}')"><input type="radio" name="${r.id}-placement" value="${p}"${pl===p?' checked':''} style="display:none">${p}</label>`).join('')}</div></div>
+</div>
+<div class="failure-panel${fail?' show':''}" id="${r.id}-failure">
+<div class="failure-panel-hint">Required when relevance &le; 2 or placement is Should not appear</div>
+<div class="eval-field"><label>Failure justification *</label><textarea class="reasoning-input" id="${r.id}-justification" oninput="updateEvalJson()" placeholder="Why does this fail the query?">${saved?.relevance_justification||''}</textarea></div>
+<div style="margin-top:8px"><span class="field-label">Failure tags *</span><div style="margin-top:4px">${tags}</div></div>
+<div style="margin-top:8px"><span class="field-label">Dropped constraints <span class="optional">if INTENT-PARTIAL</span></span><div style="margin-top:4px">${constraints}</div></div>
+</div>
+</div></div>`;
+  }).join('');
+  task.results.forEach(r=>{const pl=sub?.results?.find(x=>x.position===r.rank)?.placement||'';setPlacement(r.id,pl);updateFailurePanel(r.id);});
+}
+
+function renderEvalSidePanel(){document.getElementById('eval-side-panel').innerHTML=`<div class="sec-title">Progress</div><div id="eval-progress-stats"></div><div style="margin-top:14px"><div class="sec-title">AHT note</div><div style="font-size:11px;color:var(--text3);line-height:1.5;padding:8px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border)">Passing results need only capture + relevance + placement. Justification, tags, and dropped constraints only on failures.</div><div style="margin-top:14px"><div class="sec-title">Failure taxonomy</div>${Object.entries(FAILURE_TAXONOMY).map(([k,tags])=>'<div style="font-size:10px;color:var(--text3);margin:6px 0 2px;text-transform:uppercase">'+k+'</div>'+tags.map(t=>`<div class="tax-ref-row"><div class="tax-ref-name">${t}</div></div>`).join('')).join('')}</div>`;updateEvalProgress();}
+
+function toggleTag(btn){btn.classList.toggle('active-tag');updateEvalJson();}
+
+function toggleMissingDetail(){const w=document.getElementById('missing-detail-wrap');const v=document.getElementById('qa-missing-flag')?.value;if(w)w.style.display=v==='yes'?'block':'none';}
+
+function collectEvalData(){if(!currentEvalTask)return null;syncResultCapture();const results=currentEvalTask.results.map(r=>{const rel=document.getElementById(r.id+'-relevance')?.value||'';const placement=getPlacement(r.id);const fail=isFailureResult(rel,placement);return{position:r.rank,restaurant_name:r.name,cuisine:r.cuisine,price:r.price,rating:r.rating,delivery_min:r.delivery_min,relevance_1_5:rel,placement,relevance_justification:fail?(document.getElementById(r.id+'-justification')?.value.trim()||''):'',failure_tags:fail?[...document.querySelectorAll('#'+r.id+' .tax-tag.active-tag')].map(t=>t.textContent):[],dropped_constraints:fail?[...document.querySelectorAll('#'+r.id+' .constraint-chip.active-chip')].map(t=>t.textContent):[]};});return{pipeline:'Ambrosia',task_id:currentEvalTask.id,evaluator_id:EXPERT_ID,timestamp:new Date().toISOString(),account_type:document.getElementById('qa-account')?.value||EXPERT_PROFILE.accountType,query_assessment:{query_text:document.getElementById('qa-query-text')?.value.trim()||'',intent_classification:document.getElementById('qa-intent-class')?.value||'',intent_complexity:document.getElementById('qa-complexity')?.value||'',overall_result_quality:document.getElementById('qa-quality')?.value||'',result_set_diversity:document.getElementById('qa-diversity')?.value||'',ranking_quality:document.getElementById('qa-ranking')?.value||'',missing_category_flag:document.getElementById('qa-missing-flag')?.value||'',missing_category_detail:document.getElementById('qa-missing-detail')?.value.trim()||'',query_ambiguity_flag:document.getElementById('qa-ambiguity-flag')?.value||'',query_ambiguity_detail:document.getElementById('qa-ambiguity-detail')?.value.trim()||'',constraint_tradeoff_flag:document.getElementById('qa-tradeoff-flag')?.value||'',constraint_tradeoff_detail:document.getElementById('qa-tradeoff-detail')?.value.trim()||'',overall_feedback:document.getElementById('qa-feedback')?.value.trim()||''},results};}
+
+function updateEvalProgress(){if(!currentEvalTask)return;let captured=0,evaluated=0,failures=0;currentEvalTask.results.forEach(r=>{if(document.getElementById(r.id+'-name')?.value.trim())captured++;if(document.getElementById(r.id+'-relevance')?.value&&getPlacement(r.id))evaluated++;if(isFailureResult(document.getElementById(r.id+'-relevance')?.value,getPlacement(r.id)))failures++;});const el=document.getElementById('eval-progress-stats');if(el)el.innerHTML=`<div class="stat-row"><span>Captured</span><span class="stat-val">${captured}/${TOP_N}</span></div><div class="stat-row"><span>Evaluated</span><span class="stat-val">${evaluated}/${TOP_N}</span></div><div class="stat-row"><span>Failures</span><span class="stat-val warn">${failures}</span></div>`;}
+function updateEvalJson(){const d=collectEvalData();const pre=document.getElementById('eval-json-pre');if(pre&&d)pre.textContent=JSON.stringify(d,null,2);updateEvalProgress();}
+function toggleEvalJson(){const b=document.getElementById('eval-json-block');if(b){b.style.display=b.style.display==='none'?'block':'none';updateEvalJson();}}
+function copyEvalJson(){const d=collectEvalData();if(d)navigator.clipboard.writeText(JSON.stringify(d,null,2)).then(()=>showToast('JSON copied'));}
+
+function simulateValidation(submission,forceFlag){const flags=[];submission.results.forEach(r=>{if(!r.restaurant_name)flags.push({code:'CAPTURE_INCOMPLETE',value:'#'+r.position,detail:'Missing restaurant name from live app'});if(!r.relevance_1_5||!r.placement)flags.push({code:'INCOMPLETE',value:'#'+r.position,detail:'Missing relevance or placement'});const rel=parseInt(r.relevance_1_5,10);const fail=isFailureResult(r.relevance_1_5,r.placement);if(fail){if(!r.relevance_justification)flags.push({code:'MISSING_JUSTIFICATION',value:'#'+r.position,detail:'Failure result missing justification'});if(!r.failure_tags||!r.failure_tags.length)flags.push({code:'MISSING_TAGS',value:'#'+r.position,detail:'Failure result missing tags'});}if(rel>=4&&r.placement==='Should not appear')flags.push({code:'INCONSISTENT_PLACEMENT',value:'#'+r.position,detail:'High relevance but Should not appear'});if(rel<=2&&r.placement==='Should appear')flags.push({code:'INCONSISTENT_PLACEMENT',value:'#'+r.position,detail:'Low relevance but Should appear'});});if(!submission.query_assessment?.intent_complexity||!submission.query_assessment?.overall_result_quality)flags.push({code:'QUERY_INCOMPLETE',value:'',detail:'Query-level scales incomplete'});if(forceFlag&&flags.length===0)flags.push({code:'INCONSISTENT_PLACEMENT',value:'#2',detail:'Demo flag'});return{flags,highPriority:flags.length>0};}
+
+function getFlaggedTasks(){return TASKS.filter(t=>t.qc?.highPriority&&t.flags?.length);}
+
+async function runValidationPipeline(task,onComplete){qcPendingTask=task;qcPendingCallback=onComplete;document.getElementById('qc-overlay').classList.add('open');document.getElementById('qc-pipeline-steps').innerHTML=VALIDATION_STEPS.map(s=>`<div class="qc-step" id="qc-step-${s.id}"><div class="qc-step-icon pending">...</div><div class="qc-step-body"><div class="qc-step-name">${s.name}</div><div class="qc-step-detail">${s.desc}</div></div></div>`).join('');const submission=task.submission||collectEvalData();const results=simulateValidation(submission);for(const s of VALIDATION_STEPS){const el=document.getElementById('qc-step-'+s.id);const icon=el.querySelector('.qc-step-icon');icon.className='qc-step-icon running';await sleep(250);const fail=results.flags.some(f=>(s.id==='capture'&&(f.code==='CAPTURE_INCOMPLETE'||f.code==='INCOMPLETE'))||(s.id==='complete'&&f.code==='INCOMPLETE')||(s.id==='query'&&f.code==='QUERY_INCOMPLETE')||(s.id==='consistency'&&f.code==='INCONSISTENT_PLACEMENT')||(s.id==='tags'&&(f.code==='MISSING_TAGS'||f.code==='MISSING_JUSTIFICATION')));icon.className='qc-step-icon '+(fail?'flag':'pass');icon.textContent=fail?'!':'OK';}task.submission=submission;task.qc=results;task.flags=results.flags.map(f=>f.code);task.status='Submitted';task.reviewStage='Initial Review Ready';document.getElementById('qc-flags-panel').style.display=results.flags.length?'block':'none';document.getElementById('qc-flag-list').innerHTML=results.flags.map(f=>`<div class="qc-flag-item"><strong>${f.code}</strong>${f.detail}</div>`).join('');document.getElementById('qc-done-panel').style.display='block';document.getElementById('qc-done-msg').innerHTML=results.highPriority?'<strong>Submitted with flags.</strong>':'<strong>Validation passed.</strong>';document.getElementById('qc-modal-close').style.display='inline-flex';if(qcPendingCallback)qcPendingCallback(task);renderFlagsPage();renderReviewQueue();renderNav();}
+
+function closeQcModal(){document.getElementById('qc-overlay').classList.remove('open');if(currentEvalIsCalibration){showPage('expert-calibration');renderCalibrationPage();}else{showPage('expert-tasks');renderExpertTasks();}qcPendingTask=null;}
+
+function submitEval(){if(!currentEvalTask)return;if(currentEvalIsCalibration){CALIBRATION_SUBMISSIONS.push({id:CALIBRATION_SUBMISSIONS.length+1,expert_email:EXPERT_PROFILE.email,timestamp:new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}),attempt:currentEvalTask.attempt||1,taskId:'CAL-001',market:EXPERT_MARKET,reviewStatus:'',feedback:''});EXPERT_PROFILE.calibrationStatus='pending_review';showToast('Calibration submitted ù awaiting feedback');showPage('expert-calibration');renderCalibrationPage();renderAdminCalibration();return;}currentEvalTask.submission=collectEvalData();runValidationPipeline(currentEvalTask,()=>renderExpertTasks());}
+
+function renderFlagsPage(){const flagged=getFlaggedTasks();document.getElementById('flags-tbody').innerHTML=flagged.length?flagged.map(t=>`<tr onclick="openFlagDetail('${t.id}')"><td><span class="priority-dot"></span>High</td><td>${t.id}</td><td>${t.expert_id}</td><td>${t.query.slice(0,28)}...</td><td>${(t.flags||[]).map(f=>`<span class="flag-chip">${f}</span>`).join('')}</td><td>${t.submission?.results?.filter(r=>parseInt(r.relevance_1_5,10)<=2).length||0}</td><td>${t.submission?.results?.filter(r=>r.failure_tags?.some(x=>x.startsWith('RANK-'))).length||0}</td><td><button class="btn btn-primary btn-sm">Review</button></td></tr>`).join(''):'<tr><td colspan="8" style="text-align:center;color:var(--text3)">No flagged evals</td></tr>';}
+
+function openFlagDetail(id){const t=TASKS.find(x=>x.id===id);if(!t)return;document.getElementById('flag-detail').style.display='block';document.getElementById('flag-detail-title').textContent=t.id+' - '+t.query.slice(0,40);document.getElementById('flag-detail-body').innerHTML=`<div id="flag-preview"></div><button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="openReview('${t.id}');showPage('reviewer-queue')">Claim for Review</button>`;renderReadonlyEval(t,document.getElementById('flag-preview'));}
+
+function filterReview(status,el){document.querySelectorAll('#page-reviewer-queue .status-tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');reviewFilter=status;renderReviewQueue();}
+
+function renderReviewQueue(){const items=TASKS.filter(t=>t.status==='Submitted'||t.reviewStage);const ft=items.filter(t=>reviewFilter==='all'||(reviewFilter==='Flagged'&&t.flags?.length)||t.reviewStage===reviewFilter);document.getElementById('review-tbody').innerHTML=ft.map(t=>`<tr onclick="openReview('${t.id}')"><td>${t.id}</td><td>${t.expert_id}</td><td>${t.query.slice(0,28)}...</td><td>${t.market}</td><td>${pill(t.reviewStage||t.status)}</td><td>${(t.flags||[]).map(f=>`<span class="flag-chip">${f}</span>`).join('')||'-'}</td><td>${t.submission?.query_assessment?.overall_result_quality||'-'}</td><td><button class="btn btn-ghost btn-sm">Review</button></td></tr>`).join('')||'<tr><td colspan="8">No items</td></tr>';}
+
+function renderReadonlyEval(task,container){if(!task.submission){container.innerHTML='<div class="callout">No submission</div>';return;}const s=task.submission;const qa=s.query_assessment;container.innerHTML=`<div class="query-eval"><div class="query-eval-title">Query assessment</div><div style="font-size:12px;color:var(--text2);line-height:1.8">Quality: ${qa.overall_result_quality}/5 | Diversity: ${qa.result_set_diversity}/5 | Ranking: ${qa.ranking_quality}/5${qa.constraint_tradeoff_flag==='yes'?' | Tradeoff noted':''}${qa.query_ambiguity_flag==='yes'?' | Ambiguity noted':''}</div>${qa.overall_feedback?`<div style="margin-top:8px;font-size:12px;color:var(--text2)">${qa.overall_feedback}</div>`:''}</div>${s.results.map(r=>`<div class="result-card" style="margin-top:8px"><div class="card-head"><span class="rank-num">#${r.position}</span> ${r.restaurant_name} <span style="margin-left:auto;font-size:11px">Rel: ${r.relevance_1_5} | ${r.placement}</span></div><div class="card-body" style="font-size:11px;color:var(--text2)">${r.cuisine?r.cuisine+' | ':''}${r.price||''}${r.relevance_justification?'<br>'+r.relevance_justification:''}${r.failure_tags?.length?' | Tags: '+r.failure_tags.join(', '):''}${r.dropped_constraints?.length?' | Dropped: '+r.dropped_constraints.join(', '):''}</div></div>`).join('')}`;}
+
+function openReview(id){const t=TASKS.find(x=>x.id===id);if(!t)return;document.getElementById('review-detail').style.display='block';document.getElementById('rev-title').textContent=t.id+' - '+t.expert_id;document.getElementById('rev-flags').innerHTML=(t.flags||[]).map(f=>`<span class="flag-chip">${f}</span>`).join('');renderReadonlyEval(t,document.getElementById('rev-eval-preview'));document.getElementById('review-checklist').innerHTML=REVIEW_CHECKLIST.map((c,i)=>`<div class="checklist-item"><input type="checkbox" id="chk-${i}"><label class="checklist-label" for="chk-${i}">${c}</label></div>`).join('');document.getElementById('rev-actions').innerHTML=`<button class="btn btn-primary" onclick="reviewAction('${id}','approved')">Approve</button><button class="btn btn-danger" onclick="reviewAction('${id}','reject')">Reject</button>`;}
+
+function reviewAction(id,action){const t=TASKS.find(x=>x.id===id);if(!t)return;if(action==='reject'){t.status='Rejected';t.reviewStage='';showToast('Rejected');}else{t.status='Approved';t.reviewStage='';showToast('Approved');}document.getElementById('review-detail').style.display='none';renderReviewQueue();renderExpertTasks();}
+
+function renderAdminCalibration(){document.getElementById('admin-cal-tbody').innerHTML=CALIBRATION_SUBMISSIONS.slice().reverse().map(s=>{const status=s.reviewStatus||'Awaiting feedback';const pillCls=status==='Approved'?'pill-green':status==='Needs rework'?'pill-red':'pill-amber';return `<tr><td>${s.expert_email.split('@')[0]}</td><td style="font-size:11px">${s.expert_email}</td><td>${s.market}</td><td>v${s.attempt}</td><td>${s.timestamp}</td><td><span class="pill ${pillCls}">${status}</span></td><td style="color:var(--text3)">${s.feedback||'-'}</td><td>${status!=='Approved'?`<button class="btn btn-primary btn-sm" onclick="adminCalAction(${s.id},'approve')">Approve</button> <button class="btn btn-danger btn-sm" onclick="adminCalAction(${s.id},'rework')">Leave Feedback</button>`:'-'}</td></tr>`;}).join('');}
+
+function adminCalAction(subId,action){const s=CALIBRATION_SUBMISSIONS.find(x=>x.id===subId);if(!s)return;if(action==='approve'){s.reviewStatus='Approved';s.feedback=s.feedback||'Approved ù ready for production tasking.';if(s.expert_email===EXPERT_PROFILE.email)EXPERT_PROFILE.calibrationStatus='approved';showToast('Approved ù expert unlocked');}else{const note=prompt('Reviewer feedback:','Placement inconsistent with relevance on result #2');if(note===null)return;s.reviewStatus='Needs rework';s.feedback=note;if(s.expert_email===EXPERT_PROFILE.email)EXPERT_PROFILE.calibrationStatus='needs_rework';showToast('Feedback sent');}renderAdminCalibration();renderCalibrationPage();renderNav();}
+
+function initMarkets(){document.getElementById('markets-tbody').innerHTML=MARKETS.map(([id,city,tz])=>`<tr><td>${id}</td><td>${city}</td><td>${tz}</td></tr>`).join('');}
+function initStates(){document.getElementById('state-flow-display').innerHTML=STATES.map((s,i)=>`<span class="state-node">${s}</span>${i<STATES.length-1?'<span class="state-arrow">&rarr;</span>':''}`).join('');document.getElementById('state-transitions').innerHTML=TRANSITIONS.map(([f,t,b,n])=>`<tr><td>${f}</td><td>${t}</td><td>${b}</td><td style="color:var(--text3)">${n}</td></tr>`).join('');}
+function initAdmin(){document.getElementById('market-progress-tbody').innerHTML=MARKETS.map(([id],i)=>`<tr><td>${id}</td><td>${180+i*40}</td><td>400</td><td>${Math.round((180+i*40)/400*100)}%</td></tr>`).join('');}
+
+function boot(){initTheme();switchRole('expert');renderCalibrationPage();renderTaskGate();renderExpertTasks();renderReviewQueue();renderFlagsPage();renderAdminCalibration();initMarkets();initStates();initAdmin();}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+
+</script>
+</body>
+</html>
